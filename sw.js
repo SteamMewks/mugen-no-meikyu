@@ -1,1 +1,64 @@
-'use strict';const PREFIX='mugen-pwa-'+encodeURIComponent(self.registration.scope)+'-',CACHE=PREFIX+'4efa0f5545ff',FILES=["./","./index.html","./manifest.webmanifest","./assets/app-0.d729a35c1024.js","./assets/app-1.85c4224a08f7.js","./assets/app-2.11b0e799fd4a.js","./assets/app-3.ec80a6a3f573.js","./assets/app-4.d9f5e4977853.js","./assets/app-5.20f0e7061976.js","./assets/app-6.add73facc458.js","./assets/app-7.ff4a828139e7.js","./assets/app-8.a21b220e6c0b.js","./assets/app-pwa.a0b7f4f683d2.js","./icons/gate-v3-192.png","./icons/gate-v3-512.png","./icons/gate-v3-maskable.png","./icons/gate-v3-apple-touch.png"];self.addEventListener('install',e=>e.waitUntil((async()=>{const c=await caches.open(CACHE);await c.addAll(FILES.map(p=>new Request(p,{cache:'reload'})));})()));self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith(PREFIX)&&key!==CACHE)await caches.delete(key);await self.clients.claim();})()));self.addEventListener('message',e=>{if(e.data?.type==='ACTIVATE_IF_SINGLE_CLIENT')e.waitUntil((async()=>{const tabs=await self.clients.matchAll({type:'window',includeUncontrolled:true});if(tabs.length===1&&tabs[0].id===e.source?.id)await self.skipWaiting();})());});self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const url=new URL(e.request.url);if(url.origin!==self.location.origin||!url.href.startsWith(self.registration.scope))return;if(e.request.mode==='navigate'){const base=new URL(self.registration.scope);if(url.pathname!==base.pathname&&url.pathname!==new URL('index.html',base).pathname)return;e.respondWith((async()=>{const c=await caches.open(CACHE);return await c.match('./index.html')||fetch(e.request);})());return;}e.respondWith((async()=>{const c=await caches.open(CACHE);return await c.match(e.request)||fetch(e.request);})());});
+ 'use strict';
+// 公開更新時は VERSION とHTML内の ?v= を更新してください。
+const VERSION = "2026.10.30-2";
+const PREFIX = 'mugen-pwa-' + encodeURIComponent(self.registration.scope) + '-';
+const CACHE = PREFIX + VERSION;
+const FILES = [
+  "./assets/update-history.js?v=2026.10.30-2",
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./assets/00-language-data.js?v=2026.10.30-2",
+  "./assets/01-word-filter.js?v=2026.10.30-2",
+  "./assets/02-game.js?v=2026.10.30-2",
+  "./assets/03-enemy-symbols.js?v=2026.10.30-2",
+  "./assets/04-viewport.js?v=2026.10.30-2",
+  "./assets/05-living-dungeon.js?v=2026.10.30-2",
+  "./assets/06-living-followers.js?v=2026.10.30-2",
+  "./assets/07-living-events.js?v=2026.10.30-2",
+  "./assets/08-audio.js?v=2026.10.30-2",
+  "./assets/pwa.js?v=2026.10.30-2",
+  "./assets/style.css?v=2026.10.30-2",
+  "./icons/gate-v3-192.png",
+  "./icons/gate-v3-512.png",
+  "./icons/gate-v3-apple-touch.png",
+  "./icons/gate-v3-maskable.png",
+  "./icons/gate.svg"
+];
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(FILES.map(path => new Request(path, {cache:'reload'})));
+  })());
+});
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    for (const key of await caches.keys()) {
+      if (key.startsWith(PREFIX) && key !== CACHE) await caches.delete(key);
+    }
+    await self.clients.claim();
+  })());
+});
+self.addEventListener('message', event => {
+  if (event.data?.type === 'GET_VERSION') {
+    event.ports[0]?.postMessage({type:'VERSION', version:VERSION});
+  }
+  if (event.data?.type === 'ACTIVATE_IF_SINGLE_CLIENT') {
+    event.waitUntil((async () => {
+      const clients = await self.clients.matchAll({type:'window', includeUncontrolled:true});
+      if (clients.length === 1 && clients[0].id === event.source?.id) await self.skipWaiting();
+    })());
+  }
+});
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin || !url.href.startsWith(self.registration.scope)) return;
+  const root = new URL(self.registration.scope);
+  const isEntry = event.request.mode === 'navigate' &&
+    (url.pathname === root.pathname || url.pathname === new URL('index.html', root).pathname);
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    return await cache.match(isEntry ? './index.html' : event.request) || fetch(event.request);
+  })());
+});

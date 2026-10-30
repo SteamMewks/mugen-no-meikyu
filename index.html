@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>夢幻ノ迷宮</title><meta name="mugen-enemy-icons" content="embedded-png64-isolated-spritesheet-30-v9-hp-sync"><meta name="mugen-bgm-build" content="opus28-floor-score-v3-worker-responsive"><meta name="mugen-ally-ai" content="good-enough-75-v2-two-card-base"><meta name="mugen-enemy-difficulty" content="grade-shield-v1"><meta name="mugen-growth-training" content="job-growth-training-v1"><meta name="mugen-equipment-options" content="rarity-points-risk-scaling-v1"><meta name="mugen-location-ui" content="floor-label-plaque-v11-modal-safe-v3-toolbar-aware">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="theme-color" content="#18130a">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/gate-v3-apple-touch.png">
+<link rel="icon" href="./icons/gate-v3-192.png" type="image/png">
+<link rel="stylesheet" href="./assets/style.css?v=2026.10.30-2">
+</head>
+<body>
+
+<button id="opening-screen" type="button" aria-label="夢幻ノ迷宮。画面をタップして音声設定へ進む" onclick="showOpeningSoundNotice()">
+	<span id="pwa-version" aria-live="polite">Ver. 確認中…</span>
+	<span class="opening-frame">
+		<span class="opening-gate" aria-hidden="true"><svg viewBox="0 0 400 555" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+			<defs><linearGradient id="opening-gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#75613b"/><stop offset=".5" stop-color="#d4af64"/><stop offset="1" stop-color="#54482e"/></linearGradient><radialGradient id="opening-void"><stop stop-color="#292820"/><stop offset=".7" stop-color="#121616"/><stop offset="1" stop-color="#090b0c"/></radialGradient></defs>
+			<path d="M17 553V203C17 101 99 18 200 18s183 83 183 185v350" fill="none" stroke="#383126" stroke-width="30"/>
+			<path d="M17 553V203C17 101 99 18 200 18s183 83 183 185v350" fill="none" stroke="url(#opening-gold)" stroke-width="4"/>
+			<path d="M42 553V204C42 116 113 45 200 45s158 71 158 159v349Z" fill="url(#opening-void)" stroke="#8b744a" stroke-width="2"/>
+			<path d="M57 553V205C57 126 121 61 200 61s143 65 143 144v348" fill="none" stroke="#514834" stroke-width="2"/>
+			<path d="M200 63v490M60 252h280M60 411h280" stroke="#6b5b3b" stroke-width="2" opacity=".76"/>
+			<path d="M78 241V204c0-67 54-122 122-122s122 55 122 122v37M78 268v126m244-126v126M78 428v106m244-106v106" fill="none" stroke="#b59657" stroke-width="1" opacity=".57"/>
+			<path d="M95 553V206c0-58 47-105 105-105s105 47 105 105v347" fill="none" stroke="#2b302b" stroke-width="14" opacity=".64"/>
+			<path d="M200 125l15 22-15 22-15-22zM200 450l12 18-12 18-12-18z" fill="#a88c54" opacity=".72"/>
+			<circle cx="189" cy="315" r="4" fill="#b49760"/><circle cx="211" cy="315" r="4" fill="#b49760"/>
+			<path d="M0 553h400" stroke="url(#opening-gold)" stroke-width="5"/>
+		</svg></span>
+		<span class="opening-title" aria-hidden="true"><span class="opening-title-line">夢幻ノ迷宮</span></span>
+		<span id="opening-prompt" class="opening-prompt">画面をタップ</span>
+	</span>
+</button>
+
+<div id="opening-sound-notice" role="dialog" aria-modal="true" aria-labelledby="opening-sound-title">
+  <div class="opening-sound-card">
+    <div id="opening-sound-title" class="opening-sound-title">音量について</div>
+    <div class="opening-sound-text">このゲームではBGMと効果音が流れます。<br>イヤホン・スピーカーの音量にご注意ください。</div>
+    <div class="opening-sound-choice" role="group" aria-label="起動時のBGM">
+      <button id="opening-sound-on" type="button" onclick="setOpeningSoundChoice(true)">♪ 音あり</button>
+      <button id="opening-sound-off" type="button" onclick="setOpeningSoundChoice(false)">🔇 ミュート</button>
+    </div>
+    <button id="opening-sound-start" type="button" onclick="confirmOpeningSoundNotice()">開始</button>
+    <div class="opening-sound-note">選択はあとから「設定 → サウンド」で変更できます。</div>
+  </div>
+</div>
+
+<div id="game-toolbar">
+	<div style="display:flex;gap:4px;align-items:center;">
+		<button class="toolbar-btn" id="archive-open-btn" onclick="openArchiveModal()" style="border-color:#b99b5e;color:#f0d99b;">📖 迷宮蒐録</button>
+		<button class="toolbar-btn" id="summona-call-btn" onclick="openSummonaHelp()" style="border-color:#7fb7d8;color:#bfe8ff;">🔔 サモナに聞く</button>
+		<button class="toolbar-btn" id="word-research-btn" onclick="openSummonaHelp('research')" style="display:none;border-color:#638ca3;color:#d7e8ff;">🔎 調査</button>
+		<button class="toolbar-btn" id="settings-open-btn" onclick="openSettingsModal()" style="border-color:#888;color:#ddd;">⚙️ 設定</button>
+	</div>
+	<span id="diamond-display" style="font-size:11px;color:#8de8ff;">💎0　💰0G</span>
+</div>
+
+<div id="settings-modal" style="display:none;position:fixed;inset:0;z-index:60000;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.90);">
+	<div style="width:min(94vw,410px);max-height:88dvh;overflow-y:auto;background:linear-gradient(180deg,#242424,#151515 26%,#101010);border:2px solid #777;border-radius:8px;padding:11px;box-shadow:0 12px 36px rgba(0,0,0,.9);">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #555;padding-bottom:6px;margin-bottom:9px;">
+			<b style="font-size:13px;color:#ddd;">⚙️ 設定</b>
+			<button id="settings-close-button" onclick="closeSettingsModal()" style="padding:4px 10px;font-size:11px;">閉じる</button>
+		</div>
+  <div id="creation-settings-note" hidden style="font-size:11px;line-height:1.6;padding:8px;margin-bottom:8px;border:1px solid #8b7437;color:#ead79a;">
+   <div id="creation-settings-summary"></div>
+   <div>ゲーム設定は開始後も変更できます。死亡時の扱いは迷宮の外で変更できます。</div>
+   <button id="creation-settings-expand" type="button" onclick="expandCreationSettings()" style="margin-top:6px;min-height:36px;width:100%;">すべての設定を見る</button>
+  </div>
+		<div style="display:flex;flex-direction:column;gap:8px;">
+			<div style="background:#172026;border:1px solid #45606d;border-radius:5px;padding:8px;">
+				<div style="font-size:12px;font-weight:bold;color:#bfe8ff;margin-bottom:6px;">遊び方</div>
+				<div style="display:flex;flex-direction:column;gap:7px;">
+					<div style="display:flex;gap:7px;align-items:center;font-size:11px;line-height:1.5;">
+						<div style="flex:1;min-width:0;"><b style="color:#ffd5bd;">ゲーム設定</b><br><span style="color:#91a7b2;">通常・夢幻迷宮に適用。依頼は失敗時に救助。</span></div>
+						<button id="setting-death-mode" type="button" aria-label="ゲーム設定を確認・変更" onclick="openDeathModePicker()" style="flex:0 0 auto;min-height:34px;padding:5px;background:#271b1a;color:#ffd5bd;border:1px solid #a87a6a;border-radius:3px;font-size:11px;">ローグライク（確認）</button>
+					</div>
+					<div id="setting-death-mode-lock" style="font-size:10px;color:#bdaea1;"></div>
+					<div style="border-top:1px solid #45606d;padding-top:7px;color:#bfe8ff;font-size:11px;font-weight:bold;">探索</div>
+					<label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.45;cursor:pointer;">
+						<input id="setting-phantom-walls" type="checkbox" onchange="setGamePreference('phantomWalls',this.checked)" style="margin-top:2px;">
+						<span><b style="color:#dbeef7;">見えない壁を許可</b><br><span style="color:#91a7b2;">通り抜けられるのに壁に見える通路を出現させる。OFFなら新たに生成されず、探索中のものも普通の通路として表示する。</span></span>
+					</label>
+					<div style="border-top:1px solid #45606d;padding-top:7px;color:#bfe8ff;font-size:11px;font-weight:bold;">プレイ補助</div>
+					<label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.45;cursor:pointer;">
+						<input id="setting-stair-arrival-confirm" type="checkbox" onchange="setGamePreference('stairArrivalConfirm',this.checked)" style="margin-top:2px;">
+						<span><b style="color:#dbeef7;">階段到達時の確認</b><br><span style="color:#91a7b2;">階段のマスへ移動した時、次・前の階層へ進むか確認する。OFFなら階段ボタンで移動する。</span></span>
+					</label>
+					<label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.45;cursor:pointer;">
+						<input id="setting-auto-open-chests" type="checkbox" onchange="setGamePreference('autoOpenChests',this.checked)" style="margin-top:2px;">
+						<span><b style="color:#dbeef7;">宝箱を自動開封</b><br><span style="color:#91a7b2;">宝箱のマスへ移動した時、その場で開ける。宝箱に擬態した罠や豪華な宝箱も対象。ただし斥候がミミックを看破した時は自動開封を中断する。</span></span>
+					</label>
+					<label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.45;cursor:pointer;">
+						<input id="setting-formation-warning" type="checkbox" onchange="setGamePreference('formationWarning',this.checked)" style="margin-top:2px;">
+						<span><b style="color:#dbeef7;">隊列警告</b><br><span style="color:#91a7b2;">射程に合わない配置を赤文字で示し、出発前に隊列を確認する。</span></span>
+					</label>
+					<div style="border-top:1px solid #45606d;padding-top:7px;color:#bfe8ff;font-size:11px;font-weight:bold;">戦闘</div>
+					<label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.45;cursor:pointer;">
+						<input id="setting-battle-tips-visible" type="checkbox" onchange="setGamePreference('battleTipsVisible',this.checked)" style="margin-top:2px;">
+						<span><b style="color:#dbeef7;">戦闘中のTipsボタン</b><br><span style="color:#91a7b2;">基本・応用・操作中の職業の説明を、戦闘画面から読み返すボタンを表示する。</span></span>
+					</label>
+					<div style="display:flex;gap:7px;align-items:center;font-size:11px;line-height:1.45;">
+						<div style="flex:1;min-width:0;"><b style="color:#dbeef7;">Auto戦闘の速度</b><br><span style="color:#91a7b2;">行動までの待ち時間。</span></div>
+						<select id="setting-auto-battle-speed" aria-label="Auto戦闘の速度" onchange="setAutoBattleSpeed(this.value)" style="flex:0 0 auto;min-height:32px;padding:3px 5px;background:#111;color:#ddd;border:1px solid #567;border-radius:3px;font-size:11px;">
+							<option value="standard">標準</option><option value="fast">早い</option><option value="fastest">最速</option>
+						</select>
+					</div>
+					<div style="display:flex;gap:7px;align-items:center;font-size:11px;line-height:1.45;">
+						<div style="flex:1;min-width:0;"><b style="color:#dbeef7;">手動戦闘の速度</b><br><span style="color:#91a7b2;">行動と結果の表示時間。</span></div>
+						<select id="setting-manual-battle-speed" aria-label="手動戦闘の速度" onchange="setManualBattleSpeed(this.value)" style="flex:0 0 auto;min-height:32px;padding:3px 5px;background:#111;color:#ddd;border:1px solid #567;border-radius:3px;font-size:11px;">
+							<option value="slow">遅い</option><option value="normal">普通</option><option value="fast">早い</option>
+						</select>
+					</div>
+					<label style="display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.45;cursor:pointer;">
+                        <input id="setting-major-battle-manual-only" type="checkbox" onchange="setGamePreference('majorBattleManualOnly',this.checked);updateBattleUIIfActive()">
+                        <span><b style="color:#dbeef7;">強敵・守護者戦は手動</b><br><span style="color:#91a7b2;">ONで強敵・守護者戦のAutoを停止。OFFなら自動で続行できますが、通常戦より手動との攻撃威力の差が大きくなります。</span></span>
+                    </label>
+
+				</div>
+				<div style="border-top:1px solid #45606d;padding-top:8px;display:flex;gap:8px;align-items:center;">
+					<div style="flex:1;font-size:11px;line-height:1.45;color:#9db5bf;">一度読んだTipsを再表示します。</div>
+					<button type="button" onclick="resetFeatureTips()" style="min-height:34px;background:#294654;border-color:#7fb7d8;color:#e6f5ff;font-size:11px;">Tipsを再表示</button>
+				</div>
+			</div>
+			<div style="background:#211d2a;border:1px solid #77608f;border-radius:5px;padding:8px;display:flex;gap:8px;align-items:center;">
+				<div style="flex:1;min-width:0;font-size:11px;line-height:1.5;color:#d8c9e9;"><b style="font-size:12px;color:#ead8ff;">カードの呼び名</b><br>同じ札をまとめて改名。継承札の《》は残ります。</div>
+				<button type="button" onclick="openCardNamingModal()" style="min-height:35px;background:#493657;border-color:#ad83c2;color:#f4eaff;">名前を編集</button>
+			</div>
+            <div style="background:#19251f;border:1px solid #567967;border-radius:5px;padding:8px;">
+                <div style="font-size:12px;font-weight:bold;color:#d2f2de;margin-bottom:6px;">アプリ</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                    <button type="button" disabled title="準備中" style="min-height:36px;opacity:.55;">PWAをダウンロード（準備中）</button>
+                    <button type="button" disabled title="準備中" style="min-height:36px;opacity:.55;">手動更新（準備中）</button>
+                </div>
+            </div>
+			<div id="save-backup-panel" style="background:#171d22;border:1px solid #4e6978;border-radius:5px;padding:8px;">
+				<div style="font-size:12px;font-weight:bold;color:#bfe8ff;margin-bottom:5px;">セーブデータの保管</div>
+				<div style="font-size:11px;line-height:1.55;color:#9eb1bb;margin-bottom:7px;">バックアップを端末へ保存・復元できます。シナリオの進行情報はパスフレーズで保護されます。パーマデスの緊張感を保つため、保存と読み込みはそれぞれ7日に1回だけ利用できます。</div>
+				<div id="save-backup-cooldown" style="font-size:10px;line-height:1.55;color:#8fa6b1;margin-bottom:7px;"></div>
+				<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+					<button id="save-backup-export-btn" type="button" onclick="exportEncryptedSaveBackup()" style="min-height:38px;background:#294654;border-color:#7fb7d8;color:#e6f5ff;">💾 セーブデータを保存する</button>
+					<button id="save-backup-import-btn" type="button" onclick="selectEncryptedSaveBackup()" style="min-height:38px;background:#3a354d;border-color:#8f82ba;color:#eee7ff;">📂 セーブデータを読み込む</button>
+				</div>
+				<input id="save-backup-file-input" type="file" accept=".mugen-save,application/json" style="display:none" onchange="importEncryptedSaveBackupFromInput(this)">
+				<details style="margin-top:8px;background:#11171a;border:1px solid #344650;border-radius:4px;padding:6px;">
+					<summary style="cursor:pointer;color:#b9d7e6;font-size:11px;font-weight:bold;">セーブデータの保管について</summary>
+					<div style="margin-top:7px;font-size:10px;line-height:1.7;color:#aebbc2;">
+						<div><b style="color:#d7eaf3;">端末内の記録</b><br>通常の冒険記録は、この端末のブラウザに保存されます。同じ環境で遊ぶ限り、次回も続きから再開できます。</div>
+						<div style="margin-top:6px;"><b style="color:#f0c7a5;">消えることがある場合</b><br>ブラウザのデータ削除、端末の初期化・故障、利用環境の変更などで記録を読み込めなくなる場合があります。</div>
+						<div style="margin-top:6px;"><b style="color:#d7eaf3;">バックアップ</b><br>大切な記録は「セーブデータを保存する」で別に保管できます。保存したデータを使うには、設定したパスフレーズが必要です。パスフレーズを忘れると読み込めません。</div>
+						<div style="margin-top:6px;color:#c9b98f;">※ バックアップの保存と読み込みは、それぞれ7日に1回まで利用できます。</div>
+						<div style="margin-top:6px;color:#91a7b2;"><b style="color:#bfe8ff;">進行情報の保護</b><br>探索者名や所持金などの基本情報は確認用として保存され、シナリオの進行情報はパスフレーズで保護されます。</div>
+					</div>
+				</details>
+			</div>
+			<div style="background:#191919;border:1px solid #444;border-radius:5px;padding:8px;">
+				<div style="font-size:12px;font-weight:bold;color:#f0d99b;margin-bottom:5px;">冒険の記録</div>
+				<div style="font-size:11px;line-height:1.55;color:#aaa;margin-bottom:7px;">冒険の記録をすべて消去し、最初からやり直す。</div>
+				<button onclick="clearSaveData()" style="width:100%;min-height:38px;background:#4a2020;border-color:#a44;color:#ffb0b0;">🗑️ 記録消去</button>
+			</div>
+			<div style="background:#211616;border:1px solid #7b3c3c;border-radius:5px;padding:8px;">
+				<div style="font-size:12px;font-weight:bold;color:#ffb0b0;margin-bottom:5px;">緊急脱出</div>
+				<div id="emergency-escape-description" style="font-size:11px;line-height:1.6;color:#d7b6b6;margin-bottom:7px;">完全な進行不能に陥った時だけ使用する最終手段。操作中の探索者だけがHP1で町へ帰還し、ほかの仲間は全員失われる。失った仲間のカード・装備は回収されない。</div>
+				<button id="emergency-escape-btn" onclick="emergencyEscapeToTown()" style="width:100%;min-height:42px;background:#6a1818;border-color:#d65a5a;color:#fff;">⚠️ 緊急脱出を実行</button>
+			</div>
+			<div id="heart-link-settings" style="background:#172824;border:1px solid #527f72;border-radius:5px;padding:8px;">
+        <div style="font-size:12px;font-weight:bold;color:#b9dfd6;margin-bottom:6px;">こころの天気予報との連動</div>
+        <label for="heart-link-key-setting" style="font-size:11px;">天気予報の「連動設定」で保存したユーザー名</label>
+        <input id="heart-link-key-setting" type="text" inputmode="text" lang="ja" autocapitalize="none" spellcheck="false" autocomplete="off" placeholder="天気予報と同じユーザー名を入力" style="width:100%;margin:6px 0;padding:8px;background:#101a17;color:#fff;border:1px solid #679f92;">
+        <button type="button" onclick="saveHeartLinkKey()" style="width:100%;min-height:36px;">連動キーを保存</button>
+        <div id="heart-link-key-status" aria-live="polite" style="font-size:11px;line-height:1.6;margin-top:6px;color:#b9cdc7;">天気予報の「連動設定」で保存したユーザー名を、連動キーとして一度だけ保存してください。次回起動後も保持されます。毎日は、記録後に表示される８桁の符号を夢幻迷宮の入力欄に入力します。キーの変更で本日の入場回数は戻りません。空欄で保存すると連動解除。</div>
+      </div>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="death-mode-choice-modal" role="dialog" aria-modal="true" aria-label="ゲーム設定を選ぶ" style="display:none;position:fixed;inset:0;z-index:60010;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.94);" onclick="if(event.target===this)closeDeathModePicker()">
+	<div style="width:min(94vw,410px);max-height:85dvh;overflow-y:auto;background:#1d1919;border:2px solid #a87a6a;border-radius:7px;padding:12px;">
+		<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><b style="color:#ffd5bd;">ゲーム設定</b><button type="button" onclick="closeDeathModePicker()">閉じる</button></div>
+		<div style="font-size:11px;line-height:1.5;color:#bfaeaa;margin-bottom:9px;">通常迷宮と夢幻迷宮に適用。依頼中は仲間が倒れると依頼失敗となり、救助されます。</div>
+		<div style="display:grid;gap:7px;">
+			<button type="button" data-death-mode-choice="permadeath" onclick="chooseDeathMode('permadeath')" style="text-align:left;padding:8px;border-color:#bb6868;"><b>パーマデス</b><br><small>死亡者は失われる。継承者がいなければ記録も消去。</small></button>
+			<button type="button" data-death-mode-choice="roguelike" onclick="chooseDeathMode('roguelike')" style="text-align:left;padding:8px;border-color:#b99164;"><b>ローグライク</b><br><small>死亡者は失われる。救助を諦めたリーダーのデッキは回収依頼へ。継承者がいなければ同レベル・全基礎能力＋Lv×3の新探索者で再起。回収依頼は期限なしで最新の1件だけを保持。回収成功で終了し、次のデッキロスト時に上書き。</small></button>
+			<button type="button" data-death-mode-choice="safety" onclick="chooseDeathMode('safety')" style="text-align:left;padding:8px;border-color:#6b9b88;"><b>セーフティ</b><br><small>HP 0は戦闘不能。宿屋でのみ復帰。</small></button>
+		</div>
+		<div id="death-mode-choice-lock" style="font-size:10px;line-height:1.5;color:#d3afa0;margin-top:9px;"></div>
+	</div>
+</div>
+<div id="card-naming-modal" role="dialog" aria-label="カードの呼び名" style="display:none;position:fixed;inset:0;z-index:61000;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.88);">
+	<div style="width:min(94vw,430px);max-height:86dvh;overflow-y:auto;background:linear-gradient(180deg,#2a2130,#141117);border:2px solid #ad83c2;border-radius:8px;padding:12px;box-shadow:0 12px 36px #000;">
+		<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;"><b style="color:#ead8ff;">カードの呼び名</b><button type="button" onclick="closeCardNamingModal()" style="padding:6px 10px;">戻る</button></div>
+		<div style="font-size:11px;line-height:1.5;color:#c6b4d2;margin-bottom:8px;">札を選んで呼び名を入力。変更は所持札と今後手に入る同種の札に反映されます。空欄で保存すると元の名前に戻ります。</div>
+		<select id="card-naming-select" aria-label="名前を変更するカード" onchange="syncCardNamingEditor()" style="width:100%;min-height:38px;margin-bottom:7px;padding:6px;background:#100e12;color:#fff;border:1px solid #836496;"></select>
+		<div id="card-naming-original" style="font-size:11px;color:#b9a9c4;margin-bottom:5px;"></div>
+		<input id="card-naming-input" type="text" maxlength="32" placeholder="新しい呼び名（16文字まで）" style="box-sizing:border-box;width:100%;min-height:38px;padding:7px;background:#100e12;color:#fff;border:1px solid #836496;border-radius:3px;">
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;"><button type="button" onclick="saveCardNickname()" style="min-height:36px;background:#493657;border-color:#ad83c2;color:#f4eaff;">この名前で保存</button><button type="button" onclick="resetSelectedCardNickname()" style="min-height:36px;">元の名前に戻す</button></div>
+		<div id="card-naming-feedback" role="status" style="min-height:20px;margin-top:7px;font-size:11px;color:#b9d9bc;"></div>
+	</div>
+</div>
+
+<div id="view-area">
+	<div id="screen-display" style="position:relative;">
+
+		<canvas id="wireframe" width="280" height="180"></canvas>
+		<div id="dungeon-floor-transition" aria-live="polite" aria-atomic="true">
+			<div id="dungeon-floor-transition-content">
+				<div id="dungeon-floor-transition-main">⎯ 1 層 ⎯</div>
+				<div id="dungeon-floor-transition-sub"></div>
+			</div>
+		</div>
+<div id="battle-enemy-names" aria-label="敵の隊列とHP" style="display:none;position:absolute;left:4px;right:4px;bottom:4px;z-index:4;padding:3px 4px;background:rgba(8,8,8,.78);border:1px solid rgba(184,134,11,.58);border-radius:4px;overflow:hidden;"></div>
+	</div>
+	<div id="log"></div>
+</div>
+
+<div id="party-area"></div>
+
+<div id="control-area">
+
+<div id="screen-make" class="screen active" style="overflow-y:auto;padding:4px;">
+	<h3 style="font-size:13px;margin-bottom:4px;">冒険者登録</h3>
+ <div id="creation-experience-step">
+  <p style="font-size:14px;color:#ead79a;">RPGのプレイ経験を選択してください。</p>
+  <p style="font-size:11px;line-height:1.6;color:#bbb;">選択後、キャラクターとゲーム設定を確認できます。</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+   <button type="button" onclick="selectCreationExperience('first')">初めて</button>
+   <button type="button" onclick="selectCreationExperience('little')">少しだけ</button>
+   <button type="button" onclick="selectCreationExperience('used')">慣れてる</button>
+   <button type="button" onclick="selectCreationExperience('love')">大好き</button>
+  </div>
+  <p style="font-size:11px;line-height:1.6;color:#aaa;">職業は「すべての職業を表示」から選択できます。ゲーム設定は開始後も変更できます。</p>
+ </div>
+ <div id="creation-character-step" hidden>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span id="creation-experience-label" style="font-size:11px;color:#ead79a;"></span><button type="button" onclick="backToCreationExperience()">プレイ経験を変更</button></div>
+	<div style="background:#222;padding:6px;border-radius:4px;border:1px solid #444;margin-bottom:6px;">
+		<div style="font-size:11px;color:var(--accent);font-weight:bold;margin-bottom:4px;">【操作キャラクター】</div>
+		<div style="display:flex;gap:4px;margin-bottom:6px;">
+			<input type="text" id="make-name" maxlength="5" placeholder="名前（5文字まで）" style="flex:2;padding:4px;font-size:11px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;">
+			<select id="make-job-hero" onchange="onCreationJobChanged()" style="flex:1;padding:4px;font-size:11px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;"></select>
+		</div>
+		<button id="creation-all-jobs" type="button" onclick="showAllCreationJobs()" style="width:100%;min-height:36px;margin-bottom:6px;">すべての職業を表示</button>
+		<div style="font-size:11px;color:#aaa;line-height:1.5;">名前と職業を設定します。経歴によって能力の傾向が変わります。</div>
+	</div>
+
+	<div style="background:#222;padding:6px;border-radius:4px;border:1px solid #444;margin-bottom:6px;">
+		<div style="font-size:11px;color:var(--accent);font-weight:bold;margin-bottom:5px;">【経歴】</div>
+  <div role="group" aria-label="ライフパスの決め方" style="display:flex;gap:5px;margin-bottom:6px;">
+   <button id="creation-life-auto" type="button" onclick="setCreationLifeMode('auto')" aria-pressed="true" style="flex:1;min-height:40px;">おまかせ</button>
+   <button id="creation-life-manual" type="button" onclick="setCreationLifeMode('manual')" aria-pressed="false" style="flex:1;min-height:40px;">個別に設定</button>
+  </div>
+  <div style="font-size:11px;line-height:1.5;color:#bbb;margin-bottom:6px;">「おまかせ」は選択した職業に応じた経歴を設定します。職業は変更されません。</div>
+  <div id="creation-life-fields" hidden>
+		<div style="display:grid;grid-template-columns:52px minmax(0,1fr) 34px;gap:4px;align-items:center;font-size:11px;">
+			<span>生まれ</span><select id="make-origin" onchange="updateCreationBackgroundPreview()" style="min-width:0;padding:4px;font-size:11px;background:#111;color:#fff;border:1px solid #555;"></select><button type="button" onclick="randomizeCreationBackground('origin','make-origin')" style="min-height:30px;font-size:15px;">🎲</button>
+			<span>育ち</span><select id="make-upbringing" onchange="updateCreationBackgroundPreview()" style="min-width:0;padding:4px;font-size:11px;background:#111;color:#fff;border:1px solid #555;"></select><button type="button" onclick="randomizeCreationBackground('upbringing','make-upbringing')" style="min-height:30px;font-size:15px;">🎲</button>
+			<span>理由</span><select id="make-motive" onchange="updateCreationBackgroundPreview()" style="min-width:0;padding:4px;font-size:11px;background:#111;color:#fff;border:1px solid #555;"></select><button type="button" onclick="randomizeCreationBackground('motive','make-motive')" style="min-height:30px;font-size:15px;">🎲</button>
+		</div>
+  <button type="button" onclick="chooseCreationLife('random')" style="min-height:40px;width:100%;margin-top:6px;">経歴だけランダムにする</button>
+  </div>
+		<div id="creation-background-preview" style="margin-top:6px;background:#111;border:1px solid #333;border-radius:4px;padding:6px;font-size:11px;line-height:1.55;color:#bbb;"></div>
+	</div>
+
+	<button onclick="createPlayer()" style="padding:10px;background:#2a5a2a;width:100%;font-size:12px;margin-top:4px;">設定へ進む</button>
+ </div>
+</div>
+
+	<div id="screen-town" class="screen">
+		<div id="town-objective" style="display:none;margin-bottom:6px;padding:7px 8px;border:1px solid #8b7437;border-radius:4px;background:#1b180f;color:#ead79a;font-size:11px;line-height:1.45;max-height:62px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;"></div>
+		<div class="btn-grid">
+			<button id="town-rest-btn" onclick="townAction('rest')">休息 (宿屋)</button>
+			<button id="town-storage-btn" onclick="townAction('storage')">拠点</button>
+			<button id="town-shop-btn" onclick="townAction('shop')">店</button>
+			<button id="town-guild-btn" onclick="showScreen('screen-guild')" style="grid-column:span 3;background:#3a2a5a;margin-bottom:2px;">冒険者ギルド</button>
+			<button id="town-dungeon-btn" onclick="openDungeonSelect()" style="grid-column:span 3;background:#622;font-size:14px;">ダンジョン選択へ</button>
+		</div>
+	</div>
+
+<div id="screen-storage" class="screen">
+	<div style="font-size:11px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:2px;">
+		<span>【拠点】</span>
+		<div style="display:flex;gap:4px;align-items:center;min-width:0;">
+			<button onclick="openDeckRulesModal()" style="padding:3px 7px;min-height:28px;font-size:11px;background:#332a18;border-color:#8b7437;color:#ead79a;">ルール</button>
+			<select id="storage-char-select" onchange="changeStorageCharacter()" style="padding:2px;font-size:11px;background:#222;color:#fff;border:1px solid #555;border-radius:3px;min-width:0;"></select>
+		</div>
+	</div>
+
+	<div style="display:flex;align-items:center;gap:5px;flex-shrink:0;margin-bottom:3px;font-size:11px;color:#aaa;">
+		<span>並び</span>
+		<select id="storage-sort-select" onchange="setStorageSortMode(this.value)" style="flex:0 0 auto;padding:3px 5px;font-size:11px;background:#181818;color:#ddd;border:1px solid #555;border-radius:3px;">
+			<option value="suit">スート</option>
+			<option value="name">名前</option>
+			<option value="rarity">レア度</option>
+			<option value="mana">マナ</option>
+			<option value="level">Lv</option>
+		</select>
+		<span id="storage-edit-status" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8e856f;">タップで選択・長押しで詳細</span>
+	</div>
+
+ <div style="display:flex;gap:6px;flex-shrink:0;margin-bottom:5px;">
+  <button onclick="openEquipmentWarehouse('weapon')" style="flex:1;min-height:34px;">⚔️ 武器倉庫</button>
+  <button onclick="openEquipmentWarehouse('armor')" style="flex:1;min-height:34px;">🛡️ 防具倉庫</button>
+ </div>
+	<div id="storage-deck-suit-counts" aria-label="デッキのスート別枚数" aria-live="polite" style="flex-shrink:0;min-height:20px;margin-bottom:3px;padding:3px 6px;background:#1b242a;border:1px solid #425363;border-radius:4px;font-size:12px;line-height:1.5;color:#ead79a;white-space:normal;overflow-wrap:anywhere;"></div>
+
+	<div style="display:flex;gap:4px;flex:1;min-height:0;min-width:0;width:100%;overflow:hidden;">
+		<div style="flex:1 1 0;width:0;min-width:0;display:flex;flex-direction:column;background:#111;padding:4px;border:1px solid #444;border-radius:4px;min-height:0;overflow:hidden;">
+			<div id="deck-title-text" style="font-size:11px;color:#aaa;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">デッキ (0枚)</div>
+			<div id="deck-card-list" style="overflow-y:auto;overflow-x:hidden;flex:1;min-width:0;width:100%;display:flex;flex-direction:column;gap:2px;"></div>
+		</div>
+
+		<div style="flex:1 1 0;width:0;min-width:0;display:flex;flex-direction:column;background:#111;padding:4px;border:1px solid #444;border-radius:4px;min-height:0;overflow:hidden;">
+			<div id="storage-bag-title" style="font-size:11px;color:#aaa;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">カード鞄 (0枚)</div>
+			<div id="storage-card-list" style="overflow-y:auto;overflow-x:hidden;flex:1;min-width:0;width:100%;display:flex;flex-direction:column;gap:2px;"></div>
+		</div>
+	</div>
+
+	<div style="display:flex;flex-shrink:0;margin-top:3px;">
+		<button id="storage-transfer-btn" class="storage-transfer-btn" onclick="transferSelectedStorageCards()" style="width:100%;" disabled>選択カードを移動</button>
+	</div>
+	<button id="storage-town-btn" onclick="showScreen('screen-town')" style="flex-shrink:0;padding:4px;font-size:11px;margin-top:3px;">街に戻る</button>
+</div>
+
+<div id="mugen-floor-choice-modal" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:14px;">
+	<div style="width:min(560px,94vw);max-height:88vh;overflow:auto;background:#111813;border:1px solid #6f8769;padding:14px;box-shadow:0 0 24px #000;">
+		<div style="font-size:16px;font-weight:bold;color:#d9f0cf;margin-bottom:4px;">夢幻の変異</div>
+		<div id="mugen-floor-choice-status" style="font-size:11px;color:#aaa;margin-bottom:10px;"></div>
+		<div id="mugen-floor-choice-list" style="display:grid;gap:8px;"></div>
+		<div style="font-size:10px;color:#777;margin-top:10px;">3枚から1枚を選ぶ。内容は選択後にすべて開示され、選んだ変異はこの先にも残る。</div>
+	</div>
+</div>
+
+<div id="storage-card-detail-modal" style="display:none;position:fixed;inset:0;z-index:475;background:rgba(0,0,0,.90);align-items:center;justify-content:center;padding:14px;" onclick="if(event.target===this) closeStorageCardDetailModal()">
+	<div style="width:min(92vw,390px);max-height:78dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#242019,#161616 24%,#101010);border:2px solid #8b7437;border-radius:8px;padding:10px;box-shadow:0 10px 32px rgba(0,0,0,.88);">
+		<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #5d4c24;padding-bottom:6px;margin-bottom:8px;">
+			<div id="storage-card-detail-title" style="min-width:0;font-size:13px;font-weight:bold;overflow-wrap:anywhere;"></div>
+			<button onclick="closeStorageCardDetailModal()" style="flex:0 0 auto;padding:4px 9px;font-size:11px;">閉じる</button>
+		</div>
+		<div id="storage-card-detail-meta" style="font-size:11px;color:#aaa;line-height:1.55;margin-bottom:7px;"></div>
+		<div id="storage-card-detail-effect" style="overflow-y:auto;min-height:70px;max-height:52dvh;background:#0f0e0b;border:1px solid #4d4328;border-radius:5px;padding:9px;font-size:12px;line-height:1.7;color:#ddd;white-space:pre-wrap;overflow-wrap:anywhere;"></div>
+	</div>
+</div>
+
+<div id="battle-card-detail-modal" style="display:none;position:fixed;inset:0;z-index:486;background:rgba(0,0,0,.90);align-items:center;justify-content:center;padding:14px;" onclick="if(event.target===this) closeBattleCardDetailModal()">
+	<div style="width:min(92vw,390px);max-height:82dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#20272b,#15191b 24%,#0f1112);border:2px solid #65899c;border-radius:8px;padding:10px;box-shadow:0 10px 32px rgba(0,0,0,.88);">
+		<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #425b68;padding-bottom:6px;margin-bottom:8px;">
+			<div id="battle-card-detail-title" style="min-width:0;font-size:14px;font-weight:bold;overflow-wrap:anywhere;"></div>
+			<button onclick="closeBattleCardDetailModal()" style="flex:0 0 auto;padding:4px 9px;font-size:11px;">閉じる</button>
+		</div>
+		<div id="battle-card-detail-meta" style="font-size:11px;line-height:1.55;margin-bottom:7px;"></div>
+		<div id="battle-card-detail-effect" style="font-size:12px;line-height:1.65;color:#e1edf2;background:#101619;border:1px solid #334b56;border-radius:5px;padding:8px;margin-bottom:7px;"></div>
+		<div id="battle-card-detail-notes" style="overflow-y:auto;min-height:50px;max-height:48dvh;background:#0d0f10;border:1px solid #333;border-radius:5px;padding:8px;font-size:11px;line-height:1.7;color:#cfd7db;"></div>
+	</div>
+</div>
+
+<div id="equipment-warehouse-modal" style="display:none;position:fixed;inset:0;z-index:490;background:rgba(0,0,0,.9);align-items:center;justify-content:center;padding:12px;">
+ <div style="width:min(96vw,480px);height:min(86dvh,720px);display:flex;flex-direction:column;min-height:0;background:#171b20;border:2px solid #9b855b;border-radius:8px;padding:12px;box-sizing:border-box;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;"><b>装備倉庫</b><button onclick="closeEquipmentWarehouse()">閉じる</button></div>
+  <div style="display:flex;gap:6px;margin:8px 0;"><button id="equipment-warehouse-weapon" onclick="openEquipmentWarehouse('weapon')" style="flex:1;"></button><button id="equipment-warehouse-armor" onclick="openEquipmentWarehouse('armor')" style="flex:1;"></button></div>
+  <div id="equipment-warehouse-overflow" style="flex-shrink:0;"></div>
+  <div id="equipment-warehouse-owner" style="margin-bottom:6px;flex-shrink:0;"></div>
+  <div id="equipment-warehouse-list" style="overflow-y:auto;min-height:0;flex:1;display:flex;flex-direction:column;gap:7px;"></div>
+ </div>
+</div>
+
+<div id="deck-rules-modal" style="display:none;position:fixed;inset:0;z-index:472;background:rgba(0,0,0,.90);align-items:center;justify-content:center;padding:14px;">
+	<div style="width:min(94vw,410px);max-height:86dvh;overflow-y:auto;background:linear-gradient(180deg,#242019,#171717 24%,#111);border:2px solid #8b7437;border-radius:8px;padding:11px;box-shadow:0 10px 30px rgba(0,0,0,.86);">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #5d4c24;padding-bottom:6px;margin-bottom:8px;">
+			<b style="color:#ead79a;font-size:13px;">🃏 デッキ編成ルール</b>
+			<button onclick="closeDeckRulesModal()" style="padding:4px 9px;font-size:11px;">閉じる</button>
+		</div>
+		<div style="font-size:11px;line-height:1.65;color:#ddd;display:flex;flex-direction:column;gap:7px;">
+			<details open style="background:#211e18;border:1px solid #625536;border-radius:4px;padding:8px;">
+				<summary style="color:#ead79a;cursor:pointer;font-weight:bold;">① 共通ルール</summary>
+				<div style="margin-top:8px;">
+					<div><b style="color:#f4d893;">編成</b><br>通常の冒険者は<b>20～30枚</b>。素材・消耗品・報酬・レガシーも総枚数に含む。<br>通常札は<b>3スートまで・同じスート12枚まで・同名4枚まで</b>。お守りは1人1枚、レガシーは3種類まで。<br><span style="color:#bbb;">出撃時に20枚未満なら確認後、不足分を一時札《ブランク》で補える。ブランクは既存の編成制限を無視し、マナ0・コンボ不可・物理20%・ジョブ特殊効果対象外。迷宮内でカードを得ると入れ替わり、帰還時に残りは消滅する。</span></div>
+					<div style="margin-top:9px;padding-top:8px;border-top:1px solid #514936;"><b style="color:#bfe8ff;">探索と戦闘</b><br>補給員以外が町から持ち出せる消耗品は<b>10枚まで</b>。戦闘では所持札から<b>最大20枚</b>が選ばれる。<br>カードの残り使用回数は札で確認できる。宿屋や泉、マナ水で補給できる。迷宮で拾った札は帰還後にカード鞄へ移る。</div>
+				</div>
+			</details>
+			<details style="background:#211d25;border:1px solid #64506e;border-radius:4px;padding:8px;">
+				<summary style="color:#dfbfea;cursor:pointer;font-weight:bold;">② ジョブごとのルール</summary>
+				<div style="margin-top:8px;">
+					<div><b style="color:#e9d8ff;">蒸機師</b><br>通常札は単独で扱い、<b>⚔️攻撃＋［蒸気機関］＋ジェム</b>で強化する。</div>
+					<div style="margin-top:8px;"><b style="color:#c7d9ff;">錬金術師・魔術師</b><br>錬金術師は<b>🔮攻撃＋［触媒］＋素材</b>を組み合わせる。魔術師は魔法にジェムを添えるとマナを節約できる。</div>
+					<div style="margin-top:8px;"><b style="color:#f5d1ab;">道化師・補給員</b><br>道化師はスートの種類数に制限がないが、同じスートは12枚まで。コスト0の異なるスートをつなげられる。補給員は<b>0～60枚</b>で、消耗品・報酬のみ所持できる。</div>
+				</div>
+			</details>
+			<details style="background:#1b2020;border:1px solid #486064;border-radius:4px;padding:8px;">
+				<summary style="color:#bfe8ff;cursor:pointer;font-weight:bold;">③ スートと特殊な札</summary>
+				<div style="margin-top:8px;">
+					<div><b style="color:#f6b28a;">⚔️ 物理</b>　武器で攻める札。<br><b style="color:#b9b9ff;">🔮 魔法</b>　魔力で攻める札。<br><b style="color:#a9dcff;">🛡️ 防御</b>　シールドで攻撃を受け止める札。<br><b style="color:#b9ebaa;">✨ 回復</b>　仲間を癒やす札。<br><b style="color:#f4de8a;">🌟 特殊</b>　補助・妨害などの札。ほかのスートにも添えられる。</div>
+					<div style="margin-top:9px;padding-top:8px;border-top:1px solid #42565a;"><b style="color:#e7c98a;">🏅 レガシー</b><br>デッキに入れると常時作用する。戦闘中に使う札ではなく、通常札のスート種類数・同スート12枚制限には数えない。</div>
+					<div style="margin-top:9px;"><b style="color:#b7e8bd;">🧪 消耗品</b><br>探索中に使う道具。ポーションは負傷の治療、マナ水は補給に使える。</div>
+					<div style="margin-top:9px;"><b style="color:#edc7a3;">📦 ジェム・素材・報酬カード</b><br>ジェムは一部のジョブが戦闘で使える。ほかの素材や報酬も所持枠を使うので、抱えすぎると欲しい札を引きづらくなる。</div>
+					<div style="margin-top:9px;padding-top:8px;border-top:1px solid #42565a;color:#bacad0;">🧪・📦は通常札のスート種類数・同スート12枚・同名4枚制限の対象外。使い方は「🔔 サモナに聞く」でも確認できるよ。</div>
+				</div>
+			</details>
+			<div style="color:#9eb5c2;font-size:10px;">戦い方や隊列は「🔔 サモナに聞く」で、気になる話だけ聞けるよ。</div>
+		</div>
+	</div>
+</div>
+
+<div id="pioneer-journal-modal" style="display:none;position:fixed;inset:0;z-index:260;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:10px;">
+	<div style="width:min(96vw,680px);height:min(88dvh,720px);max-height:calc(100dvh - 20px);min-height:0;display:flex;flex-direction:column;gap:8px;background:#17140f;border:2px solid #8b7437;border-radius:7px;padding:10px;overflow:hidden;">
+		<div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+			<b style="color:#ead79a;font-size:16px;">📜 先駆者の記録</b>
+			<button onclick="closePioneerJournal()" style="padding:6px 12px;font-size:13px;">戻る</button>
+		</div>
+		<div style="font-size:12px;color:#aaa;line-height:1.5;flex-shrink:0;">通常迷宮の痕跡から回収した記録。番号順ではなく、判明している出典から束ね直す。</div>
+		<div id="pioneer-journal-sort-bar" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;flex-shrink:0;">
+			<button data-sort="handwriting" onclick="setPioneerJournalSortMode('handwriting')" style="min-height:32px;font-size:11px;">筆跡</button>
+			<button data-sort="era" onclick="setPioneerJournalSortMode('era')" style="min-height:32px;font-size:11px;">時代</button>
+			<button data-sort="area" onclick="setPioneerJournalSortMode('area')" style="min-height:32px;font-size:11px;">エリア</button>
+		</div>
+
+		<div style="display:flex;gap:8px;flex:1;min-height:0;overflow:hidden;">
+			<div id="pioneer-journal-list"
+           style="width:38%;min-width:120px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:6px;padding-right:3px;"></div>
+
+			<div style="flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+				<div id="pioneer-journal-titles"
+             style="flex-shrink:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+					<button id="pioneer-journal-prev" onclick="movePioneerJournalEntry(-1)" style="min-height:34px;font-size:11px;">前</button>
+					<button id="pioneer-journal-back" onclick="backPioneerJournalList()" style="min-height:34px;font-size:11px;">戻る</button>
+					<button id="pioneer-journal-next" onclick="movePioneerJournalEntry(1)" style="min-height:34px;font-size:11px;">次</button>
+				</div>
+				<div id="pioneer-journal-body"
+             style="flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#0f0e0b;border:1px solid #4d4328;border-radius:5px;padding:12px;font-size:15px;line-height:1.85;color:#ddd;white-space:pre-wrap;text-align:left;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="screen-shop" class="screen">
+	<div style="font-size:11px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:3px;gap:6px;">
+		<span>【道具屋】</span>
+		<span id="shop-gold-display" style="color:#d4af37;white-space:nowrap;">0G</span>
+	</div>
+
+	<div id="energy-display" style="font-size:11px;background:#111;padding:4px;border:1px solid #444;border-radius:3px;display:flex;justify-content:space-between;gap:3px;flex-shrink:0;">
+		<span>⚔️:0</span><span>🛡️:0</span><span>🔮:0</span><span>✨:0</span><span>🌟:0</span>
+	</div>
+
+	<div id="shop-tab-bar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex-shrink:0;">
+		<button class="shop-tab-btn" data-shop-tab="buy" onclick="toggleShopTab('buy')">購入</button>
+		<button class="shop-tab-btn" data-shop-tab="upgrade" onclick="toggleShopTab('upgrade')">カード強化</button>
+		<button class="shop-tab-btn" data-shop-tab="equipUpgrade" onclick="toggleShopTab('equipUpgrade')">装備強化</button>
+		<button class="shop-tab-btn" data-shop-tab="sell" onclick="toggleShopTab('sell')">売却・還元</button>
+	</div>
+
+	<div class="shop-main-panel">
+		<div id="shop-mode-title" style="font-size:11px;color:#aaa;margin-bottom:4px;flex-shrink:0;line-height:1.4;">商品一覧</div>
+		<div id="shop-card-list" style="overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;padding-right:1px;"></div>
+	</div>
+
+	<button id="shop-town-btn" onclick="attemptLeaveTutorialShop()" style="min-height:32px;flex-shrink:0;">街に戻る</button>
+</div>
+
+<div id="screen-guild" class="screen">
+	<div style="font-size:11px;font-weight:bold;margin-bottom:2px;">【冒険者ギルド】</div>
+
+	<div style="display:flex;gap:4px;margin-bottom:6px;align-items:center;background:#222;padding:4px;border:1px solid #444;border-radius:4px;">
+		<span style="font-size:11px;color:var(--accent);">パーティ名:</span>
+		<input type="text" id="party-name-input" maxlength="12" placeholder="例: 暁の旅団（12文字まで）" style="flex:1;padding:3px;font-size:11px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;" onchange="savePartyName()">
+	</div>
+
+	<div style="display:flex;flex-direction:column;gap:7px;flex:1;min-height:0;">
+
+		<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;">
+			<button id="guild-hire-btn" onclick="openGuildHireModal()" style="padding:6px 2px;font-size:11px;background:#2a5a2a;">仲間を雇う</button>
+			<button id="guild-roster-btn" onclick="openRosterModal()" style="padding:6px 2px;font-size:11px;background:#32302a;border-color:#7f765f;color:#e7ddc4;">名簿</button>
+			<button id="guild-training-btn" onclick="openTrainingModal()" style="padding:6px 2px;font-size:11px;background:#293b46;border-color:#6e98ad;color:#d8f0ff;">鍛練</button>
+			<button id="guild-quest-btn" onclick="openQuestScreen()" style="padding:6px 2px;font-size:11px;background:#3b4a2a;">依頼</button>
+			<button id="guild-rescue-btn" onclick="openRescueModal()" style="grid-column:span 2;min-height:38px;padding:6px 8px;font-size:11px;background:#5a2a2a;">救助に向かう</button>
+			<button id="formation-confirm-btn" onclick="confirmFormationTutorial()" style="grid-column:span 3;padding:6px 2px;font-size:11px;background:#294654;border-color:#7fb7d8;display:none;">隊列を決定</button>
+			<button id="guild-town-btn" onclick="showScreen('screen-town')" style="grid-column:span 3;padding:6px 2px;font-size:11px;">街に戻る</button>
+		</div>
+
+		<div style="flex:1;min-height:0;display:flex;flex-direction:column;background:#111;padding:6px;border:1px solid #444;border-radius:4px;">
+			<div style="font-size:11px;color:#e6c280;margin-bottom:5px;">隊列 <span style="color:#999;">・配置ボタンで 前衛→後衛→待機</span></div>
+			<div id="guild-formation-control"></div>
+			<div id="guild-member-list" style="overflow-y:auto;min-height:0;flex:1;display:flex;flex-direction:column;gap:5px;"></div>
+		</div>
+	</div>
+</div>
+
+<div id="rename-modal" role="dialog" aria-modal="true" aria-labelledby="rename-title" style="display:none;position:fixed;inset:0;z-index:456;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:12px;" onclick="if(event.target===this) closeRenameModal()">
+ <div style="width:min(94vw,390px);max-height:82dvh;min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#282318,#171511 28%,#101010);border:2px solid #a88b4a;border-radius:8px;padding:10px;box-sizing:border-box;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px solid #5d4c24;padding-bottom:6px;margin-bottom:7px;flex-shrink:0;"><b id="rename-title" style="font-size:13px;color:#f0d99b;">📜 名簿</b><button onclick="closeRenameModal()" style="min-height:36px;">閉じる</button></div>
+  <div style="font-size:11px;color:#aaa;margin-bottom:7px;">所属冒険者の名前変更とリーダー任命を行う。</div><div id="rename-list" style="overflow-y:auto;display:flex;flex-direction:column;gap:5px;min-height:0;"></div>
+ </div>
+</div>
+
+<div id="training-modal" role="dialog" aria-modal="true" aria-labelledby="training-title" style="display:none;position:fixed;inset:0;z-index:458;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:12px;" onclick="if(event.target===this) closeTrainingModal()">
+ <div style="width:min(96vw,430px);max-height:88dvh;min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#1d2b32,#14191c 28%,#0e1011);border:2px solid #6e98ad;border-radius:8px;padding:10px;box-sizing:border-box;box-shadow:0 12px 36px rgba(0,0,0,.9);">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px solid #426272;padding-bottom:6px;margin-bottom:7px;flex-shrink:0;">
+   <div><b id="training-title" style="font-size:13px;color:#d8f0ff;">⚒️ 鍛練</b><span id="training-diamond-display" style="margin-left:8px;font-size:11px;color:#8de8ff;">💎0</span></div>
+   <button onclick="closeTrainingModal()" style="min-height:34px;padding:4px 9px;">閉じる</button>
+  </div>
+  <div style="font-size:11px;line-height:1.55;color:#aebec6;margin-bottom:7px;">💎3で、これまで札の使用から得た成長を<strong style="color:#e8d9a6;">最大10点</strong>だけ振り替えられる。職業固有の成長・初期能力・HPは変更できない。</div>
+  <select id="training-character-select" onchange="selectTrainingCharacter(this.value)" style="width:100%;min-height:34px;padding:5px;margin-bottom:7px;background:#111;color:#eee;border:1px solid #557687;border-radius:4px;"></select>
+  <div id="training-character-summary" style="font-size:11px;color:#b8c8cf;margin-bottom:6px;"></div>
+  <div id="training-stat-list" style="overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:5px;flex:1;"></div>
+  <div id="training-budget" style="margin-top:7px;padding:6px;background:#101619;border:1px solid #3c5967;border-radius:4px;font-size:11px;line-height:1.5;color:#cbd8de;"></div>
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:6px;margin-top:7px;">
+   <button onclick="resetTrainingDraft()" style="min-height:38px;background:#292929;border-color:#666;">やり直す</button>
+   <button id="training-confirm-btn" onclick="commitTrainingDraft()" style="min-height:38px;background:#315565;border-color:#78a8bd;color:#e6f7ff;">💎3で鍛練</button>
+  </div>
+ </div>
+</div>
+
+<div id="guild-hire-modal" style="display:none;position:fixed;inset:0;z-index:457;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:12px;" onclick="if(event.target===this) closeGuildHireModal()">
+	<div style="width:min(96vw,460px);height:min(88dvh,700px);max-height:calc(100dvh - 24px);display:flex;flex-direction:column;background:linear-gradient(180deg,#22251f,#161715 25%,#101010);border:2px solid #7d875f;border-radius:8px;padding:10px;box-shadow:0 12px 36px rgba(0,0,0,.9);">
+		<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #4d523d;padding-bottom:6px;margin-bottom:7px;">
+			<div><b style="font-size:13px;color:#dce6bd;">🏛️ 仲間を雇う</b><span id="guild-hire-diamond-display" style="margin-left:8px;font-size:11px;color:#8de8ff;">💎0</span></div>
+			<button onclick="closeGuildHireModal()" style="padding:4px 9px;font-size:11px;">閉じる</button>
+		</div>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px;">
+			<button id="guild-hire-tab-recruit" onclick="setGuildHireTab('recruit')" style="min-height:34px;">募集する</button>
+			<button id="guild-hire-tab-friend" onclick="setGuildHireTab('friend')" style="min-height:34px;">フレンド</button>
+		</div>
+		<div id="guild-hire-recruit-panel" style="display:flex;flex-direction:column;gap:7px;min-height:0;flex:1;overflow:hidden;">
+			<div style="background:#151915;border:1px solid #46503d;border-radius:5px;padding:8px;">
+				<div style="font-size:11px;color:#cbd8b0;font-weight:bold;margin-bottom:6px;">募集条件</div>
+				<div style="display:grid;grid-template-columns:58px minmax(0,1fr);gap:5px;align-items:center;font-size:11px;">
+					<span>ジョブ</span><select id="guild-recruit-job" onchange="updateRecruitmentApplyButton()" style="min-width:0;padding:5px;background:#111;color:#ddd;border:1px solid #56604d;"></select>
+					<span>目的</span><select id="guild-recruit-purpose" onchange="updateRecruitmentApplyButton()" style="min-width:0;padding:5px;background:#111;color:#ddd;border:1px solid #56604d;"></select>
+				</div>
+				<div id="guild-recruit-status" style="margin-top:7px;font-size:11px;line-height:1.55;color:#aaa;"></div>
+				<button id="guild-recruit-apply-btn" onclick="applyRecruitmentCriteria()" style="width:100%;min-height:36px;margin-top:7px;background:#30482f;border-color:#6f986a;">この条件で募集</button>
+			</div>
+			<div id="guild-recruit-candidates" style="overflow-y:auto;min-height:0;flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:6px;"></div>
+		</div>
+		<div id="guild-hire-friend-panel" style="display:none;flex-direction:column;gap:8px;min-height:0;flex:1;overflow-y:auto;">
+			<div style="background:#141a1f;border:1px solid #425b68;border-radius:5px;padding:8px;">
+				<div style="font-size:11px;color:#bfe8ff;font-weight:bold;margin-bottom:5px;">自分の冒険者コード</div>
+				<div style="font-size:10px;line-height:1.5;color:#91a7b2;margin-bottom:6px;">現在の操作キャラクター・装備・共有用デッキをコードにします。装備の強化と付与能力は保存され、カードはN相当になります。</div>
+				<button id="guild-friend-share-open" onclick="openFriendShareDeckModal()" style="width:100%;min-height:44px;margin:6px 0;background:#294654;">共有用デッキを編集</button>
+				<div id="guild-friend-own-code-wrap" style="position:relative;">
+					<textarea id="guild-friend-own-code" readonly rows="4" style="width:100%;resize:none;padding:6px;background:#0c1013;color:#d9edf7;border:1px solid #4d6875;border-radius:3px;font-size:10px;line-height:1.35;word-break:break-all;"></textarea>
+					<div id="guild-friend-deck-limit-overlay" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;padding:8px;background:rgba(0,0,0,.88);border:1px solid #87585d;border-radius:3px;color:#ffd0d4;font-size:12px;font-weight:bold;text-align:center;letter-spacing:.04em;">共有用デッキを20枚に設定してください</div>
+				</div>
+				<button id="guild-friend-copy-btn" onclick="copyFriendCharacterCode()" style="width:100%;min-height:34px;margin-top:5px;background:#294654;border-color:#7fb7d8;color:#dff5ff;">コードをコピー</button>
+			</div>
+			<div style="background:#181516;border:1px solid #65474a;border-radius:5px;padding:8px;">
+				<div style="font-size:11px;color:#efc2c5;font-weight:bold;margin-bottom:5px;">フレンドを受け入れる　通常 💎10</div>
+				<div style="font-size:10px;line-height:1.5;color:#b59a9d;margin-bottom:6px;">フレンドコードまたは体験版（前日譚）のクリアコードを貼り付けてください。同じ名前の仲間は同時に所属できません。持ち込み装備は本人専用です。</div>
+				<textarea id="guild-friend-import-code" rows="4" placeholder="ここにコードを貼り付け" style="width:100%;resize:none;padding:6px;background:#100c0d;color:#eee;border:1px solid #6b4d50;border-radius:3px;font-size:10px;line-height:1.35;word-break:break-all;"></textarea>
+				<button onclick="acceptFriendCharacterCode()" style="width:100%;min-height:38px;margin-top:5px;background:#583039;border-color:#b56772;color:#ffe1e5;">受け入れる</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<div id="screen-quest" class="screen">
+		<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:bold;">
+			<span>【ギルド依頼】</span><span id="quest-diamond-display" style="color:#8de8ff;">💎0</span>
+		</div>
+		<div id="quest-list" class="compact-panel" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:4px;"></div>
+		<button onclick="showScreen('screen-guild')" style="padding:5px;font-size:11px;">ギルドに戻る</button>
+	</div>
+
+<div id="quest-info-modal" style="display:none;position:fixed;inset:0;z-index:478;background:rgba(0,0,0,.91);align-items:center;justify-content:center;padding:14px;" onclick="if(event.target===this) closeQuestInfoModal()">
+	<div style="width:min(94vw,430px);max-height:86dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#24251f,#171812 26%,#10110e);border:2px solid #8b7437;border-radius:8px;padding:10px;box-shadow:0 10px 32px rgba(0,0,0,.88);">
+		<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #5d4c24;padding-bottom:6px;margin-bottom:8px;">
+			<div id="quest-info-title" style="min-width:0;font-size:13px;font-weight:bold;color:#ead79a;overflow-wrap:anywhere;">依頼詳細</div>
+			<button onclick="closeQuestInfoModal()" style="flex:0 0 auto;padding:4px 9px;font-size:11px;">閉じる</button>
+		</div>
+		<div id="quest-info-body" style="overflow-y:auto;min-height:150px;max-height:62dvh;font-size:12px;line-height:1.7;color:#ddd;"></div>
+		<button id="quest-info-primary-btn" style="width:100%;min-height:40px;margin-top:9px;background:#3a2a5a;border-color:#8d73bd;">この依頼を受ける</button>
+	</div>
+</div>
+
+<div id="current-quest-modal" role="dialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:477;background:rgba(0,0,0,.91);align-items:center;justify-content:center;padding:14px;" onclick="if(event.target===this) closeCurrentQuestInfo()">
+	<div style="width:min(94vw,430px);background:#1b1b18;border:2px solid #8b7437;border-radius:8px;padding:12px;box-shadow:0 10px 30px #000;">
+		<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;"><b id="current-quest-title" style="font-size:14px;color:#ead79a;">現在のクエスト情報</b><button onclick="closeCurrentQuestInfo()" style="padding:6px 12px;">閉じる</button></div>
+		<div id="current-quest-body" style="white-space:pre-wrap;font-size:12px;line-height:1.7;overflow-wrap:anywhere;max-height:65dvh;overflow-y:auto;overscroll-behavior:contain;"></div>
+		<button id="current-quest-brief" style="width:100%;min-height:42px;margin-top:12px;background:#3a2a5a;">ブリーフィングを再表示</button>
+	</div>
+</div>
+
+<div id="quest-retry-modal" style="display:none;position:fixed;inset:0;z-index:489;background:rgba(0,0,0,.94);align-items:center;justify-content:center;padding:14px;">
+	<div style="width:min(94vw,410px);background:linear-gradient(180deg,#2b201d,#171210 30%,#100d0c);border:2px solid #a65b48;border-radius:8px;padding:11px;box-shadow:0 10px 34px rgba(0,0,0,.9);">
+		<div id="quest-retry-title" style="font-size:14px;font-weight:bold;color:#ffb09d;border-bottom:1px solid #6b3b30;padding-bottom:6px;margin-bottom:8px;">依頼失敗</div>
+		<div id="quest-retry-body" style="font-size:12px;line-height:1.75;color:#e7d7d2;"></div>
+		<div style="display:flex;gap:6px;margin-top:10px;">
+			<button id="quest-retry-btn" onclick="retryFailedQuestInstance()" style="flex:1;min-height:42px;background:#5c3528;border-color:#bd715d;color:#ffe0d6;">もう一度挑む</button>
+			<button onclick="closeQuestRetryModal()" style="flex:1;min-height:42px;background:#333;border-color:#666;">町へ戻る</button>
+		</div>
+	</div>
+</div>
+
+	<div id="difficulty-choice-modal" role="dialog" aria-modal="true" aria-label="難易度を選ぶ" style="display:none;position:fixed;inset:0;z-index:480;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.91);" onclick="if(event.target===this)closeDungeonDifficultyPicker()">
+		<div style="width:min(94vw,410px);max-height:85dvh;overflow-y:auto;background:#171717;border:2px solid #a98b4c;border-radius:7px;padding:12px;">
+			<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px;"><b style="color:#ead79a;">難易度を選ぶ</b><button type="button" onclick="closeDungeonDifficultyPicker()">閉じる</button></div>
+			<div style="font-size:11px;line-height:1.5;color:#b9b0a0;margin-bottom:9px;">敵の強さと経験・成長・希少品の見返りが変わります。死亡時の扱いはゲーム設定の選択に従います。</div>
+			<div style="display:grid;gap:6px;">
+				<button type="button" data-difficulty-choice="standard" onclick="chooseDungeonDifficulty('standard')" style="text-align:left;padding:8px;border-color:#8b7437;"><b>標準</b><br><small>迷宮本来の危険と見返り</small></button>
+				<button type="button" data-difficulty-choice="hard" onclick="chooseDungeonDifficulty('hard')" style="text-align:left;padding:8px;border-color:#a8753f;"><b>困難</b><br><small>敵が強くなり、見返りも増える</small></button>
+				<button type="button" data-difficulty-choice="abyss" onclick="chooseDungeonDifficulty('abyss')" style="text-align:left;padding:8px;border-color:#8b5a8f;"><b>深淵</b><br><small>消耗が増し、見返りもさらに増える</small></button>
+				<button type="button" data-difficulty-choice="brink" onclick="chooseDungeonDifficulty('brink')" style="text-align:left;padding:8px;border-color:#a84444;"><b>死線</b><br><small>最も危険で、見返りも最大</small></button>
+			</div>
+		</div>
+	</div>
+	<div id="normal-word-browser-modal" role="dialog" aria-modal="true" aria-label="侵入ワードを選ぶ" style="display:none;position:fixed;inset:0;z-index:486;background:rgba(0,0,0,.91);align-items:flex-end;justify-content:center;" onclick="if(event.target===this)closeNormalWordBrowser()">
+		<div class="normal-word-browser-card">
+			<div class="normal-word-browser-head">
+				<div><b id="normal-word-browser-title">侵入ワードを選ぶ</b><div id="normal-word-browser-forecast" class="normal-word-browser-forecast"></div></div>
+				<button type="button" onclick="closeNormalWordBrowser()">閉じる</button>
+			</div>
+			<div id="normal-word-browser-tabs" class="normal-word-browser-tabs">
+				<button type="button" data-normal-word-tab="w1" onclick="switchNormalWordBrowserSlot('w1')">第1語</button>
+				<button type="button" data-normal-word-tab="w2" onclick="switchNormalWordBrowserSlot('w2')">第2語</button>
+				<button type="button" data-normal-word-tab="w3" onclick="switchNormalWordBrowserSlot('w3')">第3語</button>
+				<button type="button" data-normal-word-tab="w4" onclick="switchNormalWordBrowserSlot('w4')">第4語</button>
+			</div>
+			<div class="normal-word-browser-tools">
+				<button id="normal-word-custom-toggle" type="button" onclick="toggleNormalWordCustomInput()">✎ 自分で入力</button>
+				<div id="normal-word-custom-panel" class="normal-word-custom-panel" style="display:none;">
+					<input id="normal-word-custom-input" type="text" maxlength="5" placeholder="5文字まで" oninput="limitNormalCustomWordLength(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();applyNormalWordCustomInput();}">
+					<button type="button" onclick="applyNormalWordCustomInput()">この語を使う</button>
+				</div>
+			</div>
+			<div id="normal-word-browser-history" class="normal-word-browser-history"></div>
+			<div id="normal-word-browser-list" class="normal-word-browser-list"></div>
+			<button type="button" class="normal-word-browser-done" onclick="closeNormalWordBrowser()">この組み合わせで戻る</button>
+		</div>
+	</div>
+
+	<div id="screen-word" class="screen">
+		<div id="custom-dungeon-area" style="display:none;flex-direction:column;gap:4px;flex-shrink:0;">
+      <a id="heart-weather-open-link" href="https://steammewks.github.io/Mental-Weather-Forecast/" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;margin-bottom:3px;box-sizing:border-box;border:1px solid #679f92;border-radius:4px;background:#294b40;color:#e0f2eb;text-decoration:none;font-size:12px;font-weight:bold;text-align:center;">こころの天気予報を開く ↗</a>
+      <div style="font-size:11px;line-height:1.45;color:#b9dfd6;">好きな言葉を入力すると夢幻迷宮へ行くことができる。<br>こころの天気予報の符号を入力すると、特別な迷宮に行くことができる。<br>（要：設定から連動設定）</div>
+			<input id="custom-dungeon-input" type="text" maxlength="12" placeholder="好きな言葉／今日の符号（XXXX-XXXX）" oninput="limitMugenInputLength(this);renderDungeonDifficultyUI()" style="width:100%;padding:6px;background:#222;color:#fff;border:1px solid #555;border-radius:3px;">
+		</div>
+
+    <div id="normal-dungeon-selectors" class="normal-word-slots" style="font-size:11px;display:grid;grid-template-columns:1fr 1fr;gap:5px;flex-shrink:0;">
+			<select id="w1" onchange="updateWordInfo()" style="display:none;"></select>
+			<select id="w2" onchange="updateWordInfo()" style="display:none;"></select>
+			<select id="w3" onchange="updateWordInfo()" style="display:none;"></select>
+			<select id="w4" onchange="updateWordInfo()" style="display:none;"></select>
+			<button id="normal-word-slot-w1" type="button" class="normal-word-slot-btn" onclick="openNormalWordBrowser('w1')"></button>
+			<button id="normal-word-slot-w2" type="button" class="normal-word-slot-btn" onclick="openNormalWordBrowser('w2')"></button>
+			<button id="normal-word-slot-w3" type="button" class="normal-word-slot-btn" onclick="openNormalWordBrowser('w3')"></button>
+			<button id="normal-word-slot-w4" type="button" class="normal-word-slot-btn" onclick="openNormalWordBrowser('w4')"></button>
+		</div>
+
+		<div role="tablist" aria-label="迷宮の入口" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0;">
+			<button id="dungeon-mode-normal" role="tab" onclick="setDungeonEntryMode('normal')" style="min-height:34px;font-size:11px;">通常迷宮<br><small>4語を組み合わせる</small></button>
+			<button id="dungeon-mode-mugen" role="tab" onclick="setDungeonEntryMode('mugen')" style="display:none;min-height:34px;font-size:11px;">夢幻迷宮<br><small>好きな言葉を入力</small></button>
+			<button id="dungeon-entry-mode-toggle" onclick="toggleCustomDungeonMode()" style="display:none;">迷宮の切替</button>
+		</div>
+
+		<div id="dungeon-preview">
+      ダンジョン情報がここに表示されます
+		</div>
+
+		<div id="dungeon-difficulty-panel" style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+			<button id="dungeon-difficulty-btn" type="button" onclick="openDungeonDifficultyPicker()" style="width:100%;min-height:30px;padding:5px 7px;background:#332a18;border-color:#8b7437;color:#ead79a;font-size:11px;">難易度：標準（変更）</button>
+		</div>
+
+		<div style="display:flex;gap:4px;height:36px;flex-shrink:0;">
+			<button id="dungeon-enter-btn" onclick="enterDungeon()" style="flex:2;background:#622;font-size:12px;">ダンジョン潜入</button>
+			<button id="dungeon-select-town-btn" onclick="showScreen('screen-town')" style="flex:1;font-size:11px;">街に戻る</button>
+		</div>
+	</div>
+
+	<div id="screen-dungeon" class="screen">
+		<div class="btn-grid">
+			<button id="stairs-action-btn" onclick="useDungeonPrimaryAction()" style="background:#442;visibility:hidden;">階段／宝箱</button><button onclick="move('F')">前進</button><button id="dungeon-info-btn" onclick="openCurrentQuestInfo()" style="background:#3b3420;">現在の情報</button>
+			<button onclick="move('L')">左回転</button><button id="dungeon-map-btn" aria-label="地図を開く（0.5秒長押し）" onpointerdown="beginMinimapHold(event)" onpointermove="moveMinimapHold(event)" onpointerup="cancelMinimapHold()" onpointercancel="cancelMinimapHold()" onpointerleave="if(event.pointerType==='mouse')cancelMinimapHold()" onclick="if(event.detail===0)showMinimap()" oncontextmenu="return false">地図（長押し）</button><button onclick="move('R')">右回転</button>
+			<button onclick="openDungeonStatusModal()" style="background:#294654;border-color:#638ca3;color:#d7e8ff;">隊の情報</button><button onclick="move('B')">後退</button><span aria-hidden="true"></span>
+			<button id="tutorial-abort-btn" onclick="abortTutorial()" style="grid-column:span 3;background:#5a2a2a;display:none;">町に着くまで飛ばす</button>
+		</div>
+	</div>
+
+	<div id="screen-battle" class="screen">
+		<div id="battle-status-bar">
+			<button id="battle-auto-toggle" type="button" onclick="toggleBattleAutoMode()">手動</button>
+			<span id="deck-display">山:0 / 棄:0</span>
+		</div>
+		<div id="battle-tip-bar" aria-label="戦闘Tips">
+			<button type="button" onclick="showBattleTip('basic')">Tips：基本</button>
+			<button type="button" onclick="showBattleTip('advanced')">Tips：応用</button>
+			<button id="battle-job-tip-btn" type="button" onclick="showBattleTip('job')">Tips：職業</button>
+		</div>
+		<div id="card-hand"></div>
+		<div id="battle-action-bar">
+			<button id="reset-deck-btn" onclick="resetHandAndDeck()" style="flex:1;background:#622;">仕切り直し</button>
+			<button id="execute-btn" onclick="executeTurnWithSpeedOrder()" style="flex:2;background:#2a5a2a;font-size:13px;" disabled>実行</button>
+			<button id="battle-escape-btn" onclick="attemptBattleEscape()" style="flex:1;background:#4a3a22;border-color:#b99b5e;color:#ead79a;">戦闘を離れる</button>
+		</div>
+	</div>
+
+</div>
+
+<div id="select-hero-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:200;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+	<h3 style="color:var(--accent);margin-bottom:12px;">プレイヤーが死亡しました</h3>
+	<p style="font-size:11px;margin-bottom:16px;">後継者となるキャラクターを選択してください：</p>
+	<div id="hero-candidates" style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:280px;"></div>
+</div>
+
+<div id="adventure-result-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:460;align-items:center;justify-content:center;padding:14px;">
+	<div style="background:var(--panel);border:2px solid var(--accent);border-radius:7px;width:100%;max-width:410px;max-height:88vh;display:flex;flex-direction:column;padding:10px;box-shadow:0 8px 24px rgba(0,0,0,.85);">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #555;padding-bottom:5px;margin-bottom:6px;">
+			<span id="adventure-result-title" style="font-size:12px;font-weight:bold;color:var(--accent);">📜 探索結果</span>
+			<button onclick="closeAdventureResult()" style="padding:3px 9px;font-size:11px;">✕</button>
+		</div>
+		<div id="adventure-result-body" style="overflow-y:auto;flex:1;min-height:180px;font-size:11px;line-height:1.65;"></div>
+	</div>
+</div>
+
+
+<div id="battle-fatal-result-modal" aria-hidden="true">
+	<div class="battle-fatal-result-card" role="dialog" aria-modal="true" aria-labelledby="battle-fatal-result-title">
+		<div class="battle-fatal-result-head">
+			<b id="battle-fatal-result-title">この戦いの犠牲</b>
+			<button type="button" onclick="closeBattleFatalResultModal()" style="min-height:34px;padding:4px 10px;">閉じる</button>
+		</div>
+		<div id="battle-fatal-result-body"></div>
+	</div>
+</div>
+
+<div id="adventure-log-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:455;align-items:center;justify-content:center;padding:14px;">
+	<div style="background:var(--panel);border:2px solid var(--accent);border-radius:7px;width:100%;max-width:410px;max-height:88vh;display:flex;flex-direction:column;padding:10px;">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #555;padding-bottom:5px;margin-bottom:6px;">
+			<span style="font-size:12px;font-weight:bold;color:var(--accent);">🧭 探査履歴</span>
+			<button onclick="closeAdventureLog()" style="padding:3px 9px;font-size:11px;">戻る</button>
+		</div>
+		<div id="adventure-log-list" style="overflow-y:auto;flex:1;min-height:180px;display:flex;flex-direction:column;gap:5px;"></div>
+	</div>
+</div>
+
+<div id="map-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:100;flex-direction:column;align-items:center;justify-content:center;">
+	<div id="map-floor-label">1層</div>
+	<div id="map-grid" style="display:grid;gap:1px;background:#333;padding:4px;border:1px solid #d4af37;"></div>
+	<div id="map-explanation">
+		<div class="map-help map-current-note">緑の▲が現在地。足元は灰色の床、黒は未探索。</div>
+		<div class="map-help map-legend"><span><i style="background:#0088ff"></i>下り階段</span><span><i style="background:#ff00ff"></i>上り階段・脱出ポータル</span><span style="color:#62dcff">♨ 泉</span><span><i style="background:#ffd700"></i>宝箱</span><span><i style="background:#66ccff"></i>痕跡</span><span><i style="background:#7fd8ff"></i>調査地点</span><span><i style="background:#ff4500"></i>発見した罠</span><span style="color:#ff5252">● 近くの敵（周囲2マス）</span></div>
+	</div>
+	<button id="map-close-btn" onclick="closeMinimap()">戻る</button>
+</div>
+
+<div id="friend-share-deck-modal" role="dialog" aria-modal="true" aria-labelledby="friend-share-deck-title" style="display:none;position:fixed;inset:0;z-index:480;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.85);">
+ <div class="friend-share-dialog">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;">
+   <h3 id="friend-share-deck-title" style="margin:0;font-size:16px;color:#bfe8ff;">共有用デッキの編集</h3>
+   <button onclick="closeFriendShareDeckModal()" style="min-width:66px;min-height:44px;">完了</button>
+  </div>
+  <div id="guild-friend-share-editor"></div>
+ </div>
+</div>
+<div id="dungeon-deck-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:150;align-items:center;justify-content:center;padding:12px;">
+	<div style="background:var(--panel);border:2px solid var(--accent);border-radius:6px;width:100%;max-width:390px;max-height:85vh;display:flex;flex-direction:column;padding:8px;box-shadow:0 4px 10px rgba(0,0,0,0.8);">
+
+		<div style="font-size:12px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:6px;">
+			<span style="color:var(--accent);">【デッキ・所持品】 (<span id="dungeon-deck-count">0</span>)</span>
+			<button onclick="closeDungeonDeckMenu()" style="padding:2px 8px;font-size:11px;background:#444;border:1px solid #777;">✕ 閉じる</button>
+		</div>
+
+		<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:5px;"><span style="font-size:10px;color:#8e856f;">カードは長押しで詳細表示</span><button onclick="openFieldTransferModal()" style="height:26px;min-height:26px;max-height:26px;padding:2px 10px;flex:0 0 auto;align-self:center;font-size:11px;line-height:1;white-space:nowrap;background:#2a4a5a;">渡す</button></div>
+		<div id="dungeon-deck-list" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:4px;background:#111;padding:6px;border:1px solid #333;border-radius:4px;min-height:150px;"></div>
+	</div>
+</div>
+
+<div id="field-transfer-modal" role="dialog" aria-modal="true" aria-labelledby="field-transfer-title" style="display:none;position:fixed;inset:0;z-index:460;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:12px;" onclick="if(event.target===this) closeFieldTransferModal()">
+ <div style="width:min(94vw,390px);max-height:82dvh;min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#282318,#171511 28%,#101010);border:2px solid #a88b4a;border-radius:8px;padding:10px;box-sizing:border-box;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px solid #5d4c24;padding-bottom:6px;margin-bottom:7px;flex-shrink:0;"><b id="field-transfer-title" style="font-size:13px;color:#f0d99b;">📦 カードを渡す</b><button onclick="closeFieldTransferModal()" style="min-height:36px;">閉じる</button></div>
+  <div id="field-transfer-content" style="overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:6px;"></div><div id="field-transfer-actions" style="display:flex;gap:6px;margin-top:8px;flex-shrink:0;"></div>
+ </div>
+</div>
+
+<div id="dungeon-status-modal" role="dialog" aria-modal="true" aria-labelledby="dungeon-status-title" style="display:none;inset:0;z-index:170;background:rgba(0,0,0,.91);align-items:center;justify-content:center;padding:12px;">
+	<div style="width:min(94vw,430px);max-height:86dvh;display:flex;flex-direction:column;min-height:0;background:#171b1d;border:2px solid #638ca3;border-radius:7px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.85);">
+		<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #506778;padding-bottom:7px;margin-bottom:8px;">
+			<b id="dungeon-status-title" style="color:#d7e8ff;font-size:13px;">🧭 隊の状態</b>
+			<button onclick="closeDungeonStatusModal()" style="padding:3px 8px;font-size:10px;min-height:28px;">閉じる</button>
+		</div>
+		<div id="dungeon-formation-control"></div>
+		<div id="dungeon-status-content" style="overflow-y:auto;min-height:0;font-size:11px;line-height:1.55;"></div>
+	</div>
+</div>
+
+<div id="archive-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:440;align-items:center;justify-content:center;padding:14px;">
+	<div style="background:linear-gradient(180deg,#242019,#141414 24%);border:2px solid #8b7437;border-radius:8px;width:100%;max-width:410px;max-height:88vh;display:flex;flex-direction:column;padding:10px;box-shadow:0 8px 28px rgba(0,0,0,.86);">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #5d4c24;padding-bottom:6px;margin-bottom:8px;">
+			<div><b style="font-size:14px;color:#ead79a;">📖 迷宮蒐録</b><div style="font-size:11px;color:#8e856f;margin-top:2px;">探索者が持ち帰った記憶と知識</div></div>
+			<button onclick="closeArchiveModal()" style="padding:4px 9px;font-size:11px;">閉じる</button>
+		</div>
+		<div id="archive-summary" style="font-size:11px;line-height:1.55;color:#aaa;margin-bottom:8px;"></div>
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+			<button onclick="openArchiveSection('story')" style="min-height:66px;background:#302817;"><b>📖 物語</b><br><span style="font-size:11px;color:#c9b98a;">共同調査と冒険の記録</span></button>
+			<button onclick="openArchiveSection('history')" style="min-height:66px;background:#22303a;"><b>🧭 探査履歴</b><br><span style="font-size:11px;color:#9fb7c7;">これまでの探索結果</span></button>
+			<button onclick="openArchiveSection('research')" style="min-height:66px;background:#243225;"><b>🔎 調査記録</b><br><span style="font-size:11px;color:#a6c7a8;">所有ワードの解読</span></button>
+			<button onclick="openArchiveSection('collection')" style="min-height:66px;background:#33263a;"><b>🃏 コレクション</b><br><span style="font-size:11px;color:#c5a8d0;">UR奉納とカード記録</span></button>
+		</div>
+		<button onclick="openArchiveSection('pioneer')" style="min-height:44px;margin-top:8px;background:#2d281d;border-color:#8b7437;">📜 先駆者の記録</button>
+	</div>
+</div>
+
+<div id="word-research-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:445;align-items:center;justify-content:center;padding:12px;">
+	<div style="background:#151915;border:2px solid #66805e;border-radius:7px;width:min(96vw,680px);height:min(88dvh,720px);display:flex;flex-direction:column;padding:9px;overflow:hidden;">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #41523d;padding-bottom:5px;margin-bottom:6px;">
+			<div><b style="color:#b9d9ad;font-size:13px;">🔎 調査記録</b><div id="word-research-count" style="font-size:11px;color:#899884;margin-top:2px;"></div></div>
+			<button onclick="closeWordResearch()" style="padding:4px 9px;font-size:11px;">戻る</button>
+		</div>
+		<select id="word-research-category" onchange="renderWordResearchList()" style="background:#111;color:#ddd;border:1px solid #52664c;padding:5px;margin-bottom:6px;font-size:11px;">
+			<option value="prefix">第一語</option><option value="terrain">第二語</option><option value="modifier">第三語</option><option value="suffix">第四語</option>
+		</select>
+		<div style="display:flex;gap:7px;flex:1;min-height:0;overflow:hidden;">
+			<div id="word-research-list" style="width:38%;min-width:115px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+			<div id="word-research-detail" style="flex:1;min-width:0;overflow-y:auto;background:#0d100d;border:1px solid #344130;border-radius:4px;padding:8px;font-size:11px;line-height:1.6;"></div>
+		</div>
+	</div>
+</div>
+
+<div id="collection-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:445;align-items:center;justify-content:center;padding:12px;">
+	<div style="background:#18151b;border:2px solid #765a82;border-radius:7px;width:min(96vw,720px);height:min(88dvh,740px);display:flex;flex-direction:column;padding:9px;overflow:hidden;">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #584360;padding-bottom:5px;margin-bottom:6px;">
+			<div><b style="color:#dfbfea;font-size:13px;">🃏 コレクション</b><div id="collection-count" style="font-size:11px;color:#9d8aa4;margin-top:2px;"></div></div>
+			<button onclick="closeCollection()" style="padding:4px 9px;font-size:11px;">戻る</button>
+		</div>
+		<div style="font-size:11px;color:#aaa;line-height:1.45;margin-bottom:6px;">対応するURカードをカード鞄から奉納すると記録が開く。奉納を重ねるほど、以後入手する同名カードの数値性能が強化される。現在の補正は各カードの記録に表示される。レガシー・報酬カードは対象外。</div>
+		<div style="display:flex;gap:7px;flex:1;min-height:0;overflow:hidden;">
+			<div id="collection-list" style="width:38%;min-width:120px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>
+			<div id="collection-detail" style="flex:1;min-width:0;overflow-y:auto;background:#0f0d10;border:1px solid #48384d;border-radius:4px;padding:8px;font-size:11px;line-height:1.55;"></div>
+		</div>
+	</div>
+</div>
+
+<div id="story-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:420;align-items:center;justify-content:center;padding:14px;">
+	<div style="background:var(--panel);border:2px solid var(--accent);border-radius:7px;width:100%;max-width:390px;max-height:86vh;display:flex;flex-direction:column;padding:9px;box-shadow:0 6px 18px rgba(0,0,0,.8);">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #555;padding-bottom:5px;margin-bottom:6px;">
+			<span style="font-size:12px;font-weight:bold;color:var(--accent);">📖 物語</span>
+			<span id="story-count" style="font-size:11px;color:#aaa;"></span>
+		</div>
+		<div id="story-list" style="overflow-y:auto;flex:1;min-height:160px;display:flex;flex-direction:column;gap:5px;"></div>
+		<button onclick="closeStoryScreen()" style="padding:6px;margin-top:7px;font-size:11px;">戻る</button>
+	</div>
+</div>
+
+<div id="death-rescue-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:300;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;">
+	<h2 style="color:#ff4444;margin-bottom:10px;">全滅 / プレイヤー死亡</h2>
+	<p style="font-size:11px;margin-bottom:8px;">救難符に浮かんだ【20文字の救難刻印】を他のプレイヤーに共有してください。<br>(有効期限: 24時間)</p>
+
+	<input id="rescue-code-output" type="text" readonly maxlength="20" spellcheck="false" autocomplete="off" style="width:90%;background:#111;color:#0f0;border:1px solid #555;font:700 16px/1.2 monospace;letter-spacing:1.2px;text-align:center;margin-bottom:10px;padding:8px 6px;" aria-label="救難刻印">
+
+	<div style="border-top:1px solid #444;width:100%;padding-top:10px;margin-top:10px;">
+		<p style="font-size:11px;color:#aaa;margin-bottom:4px;">救助成立の証印を入力して復活する：</p>
+		<input type="text" id="success-key-input" placeholder="救助成立の証印を入力" style="padding:4px;font-size:11px;background:#111;color:#fff;border:1px solid #555;width:70%;">
+		<button onclick="attemptRevive()" style="padding:4px 8px;font-size:11px;background:#2a5a2a;">復活する</button>
+	</div>
+
+	<p id="death-mode-guide" style="font-size:11px;line-height:1.5;color:#d7b6b6;max-width:340px;margin:12px 0 0;"></p>
+	<button onclick="openInheritanceModal()" style="margin-top:12px;padding:6px 12px;font-size:11px;background:#444;">救助を諦めて継承へ進む</button>
+</div>
+
+<div id="guild-rescue-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:250;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+	<div style="background:var(--panel);border:2px solid var(--accent);padding:12px;border-radius:6px;width:90%;max-width:320px;text-align:center;">
+		<h3 style="font-size:12px;color:var(--accent);margin-bottom:8px;">救助依頼の受託</h3>
+		<p style="font-size:11px;margin-bottom:8px;">20文字の救難刻印を入力すると、ギルドの受響記録として照合され、臨時救助依頼が登録されます：</p>
+		<input type="text" id="rescue-code-input" maxlength="20" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="20文字の救難刻印" style="width:100%;padding:7px 6px;font:700 14px/1.2 monospace;letter-spacing:1px;text-transform:uppercase;background:#111;color:#fff;border:1px solid #555;margin-bottom:8px;text-align:center;">
+		<div style="display:flex;gap:6px;">
+			<button onclick="startRescueMission()" style="flex:1;padding:6px;background:#2a5a2a;font-size:11px;">救助依頼を登録</button>
+			<button onclick="closeRescueModal()" style="flex:1;padding:6px;background:#444;font-size:11px;">キャンセル</button>
+		</div>
+	</div>
+</div>
+
+<div id="tutorial-tip-modal" role="dialog" aria-modal="true" aria-labelledby="tutorial-tip-title">
+	<div id="tutorial-tip-card">
+		<div id="tutorial-tip-title">サモナ</div>
+		<div id="tutorial-tip-text"></div>
+		<button id="tutorial-tip-button" onclick="closeTutorialTip()">わかった</button>
+	</div>
+</div>
+
+<div id="milestone-event-modal" style="display:none;position:fixed;inset:0;z-index:468;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.88);">
+	<div style="width:min(94vw,410px);background:linear-gradient(180deg,#202a30,#151719 30%,#101112);border:2px solid #7fb7d8;border-radius:8px;padding:11px;box-shadow:0 10px 30px rgba(0,0,0,.85);">
+		<div id="milestone-event-title" style="color:#bfe8ff;font-size:13px;font-weight:bold;border-bottom:1px solid #456;padding-bottom:6px;margin-bottom:8px;">サモナ</div>
+		<div id="milestone-event-body" style="font-size:11px;line-height:1.7;color:#e6edf1;"></div>
+		<div style="display:flex;gap:6px;margin-top:10px;">
+			<button id="milestone-event-accept-btn" onclick="acceptCurrentMilestoneEvent()" style="flex:1;min-height:38px;background:#294654;border-color:#7fb7d8;">進む</button>
+			<button id="milestone-event-defer-btn" onclick="deferCurrentMilestoneEvent()" style="flex:1;min-height:38px;background:#333;border-color:#666;">今は保留</button>
+		</div>
+	</div>
+</div>
+
+<div id="summona-dialog-modal" style="display:none;position:fixed;inset:0;z-index:472;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.84);">
+	<div id="summona-dialog-card" class="story-summona" style="width:min(94vw,410px);max-height:84dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#202a30,#151719 28%,#101112);border:2px solid #7fb7d8;border-radius:8px;padding:11px;box-shadow:0 10px 30px rgba(0,0,0,.86);">
+		<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #456;padding-bottom:6px;margin-bottom:8px;">
+			<div id="summona-dialog-title" style="color:#bfe8ff;font-size:13px;font-weight:bold;">サモナ</div>
+			<div id="summona-dialog-page" aria-live="polite" style="display:none;color:#aebdc7;font-size:11px;white-space:nowrap;"></div>
+		</div>
+		<div id="summona-dialog-body" style="overflow-y:auto;font-size:11px;line-height:1.75;color:#e6edf1;"></div>
+		<div id="summona-town-guide-choices" style="display:none;flex-direction:column;gap:7px;margin-top:11px;">
+			<button type="button" onclick="chooseTownGuide('all')" style="min-height:38px;background:#294654;border-color:#7fb7d8;">施設を順に案内してもらう</button>
+			<button type="button" onclick="chooseTownGuide('context')" style="min-height:38px;background:#294654;border-color:#7fb7d8;">後で、訪れた時に聞く</button>
+			<button type="button" onclick="chooseTownGuide('skip')" style="min-height:38px;background:#333;border-color:#666;">案内をすべて飛ばす</button>
+		</div>
+		<div style="display:flex;gap:7px;margin-top:10px;">
+			<button id="summona-dialog-back-btn" type="button" onclick="previousSummonaDialogue()" style="display:none;flex:0 0 32%;min-height:38px;background:#293238;border-color:#849da6;color:#dfebef;">戻る</button>
+			<button id="summona-dialog-next-btn" onclick="closeSummonaDialogue()" style="flex:1;min-width:0;min-height:38px;background:#294654;border-color:#7fb7d8;">わかった</button>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="summona-party-select-modal" style="display:none;position:fixed;inset:0;z-index:473;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.90);">
+	<div style="width:min(94vw,430px);max-height:86dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#202a30,#151719 28%,#101112);border:2px solid #7fb7d8;border-radius:8px;padding:11px;box-shadow:0 10px 30px rgba(0,0,0,.86);">
+		<div style="color:#bfe8ff;font-size:13px;font-weight:bold;border-bottom:1px solid #456;padding-bottom:6px;margin-bottom:7px;">サモナ同行メンバー選択</div>
+		<div id="summona-party-select-guide" style="font-size:11px;line-height:1.6;color:#c8d7df;margin-bottom:7px;"></div>
+		<div id="summona-party-select-list" style="overflow-y:auto;min-height:100px;max-height:54dvh;display:flex;flex-direction:column;gap:5px;"></div>
+		<div style="display:flex;gap:6px;margin-top:9px;">
+			<button id="summona-party-select-confirm" onclick="confirmSummonaMissionPartySelection()" style="flex:1;min-height:40px;background:#294654;border-color:#7fb7d8;">この編成で出発</button>
+			<button onclick="cancelSummonaMissionPartySelection()" style="flex:1;min-height:40px;background:#333;border-color:#666;">やめる</button>
+		</div>
+	</div>
+</div>
+
+<div id="harvey-upgrade-modal" style="display:none;position:fixed;inset:0;z-index:474;align-items:center;justify-content:center;padding:14px;background:rgba(12,7,4,.90);">
+	<div style="width:min(94vw,410px);max-height:84dvh;display:flex;flex-direction:column;background:linear-gradient(180deg,#3b2a20,#211711 30%,#120d0a);border:2px solid #b86b32;border-radius:8px;padding:11px;box-shadow:0 10px 32px rgba(0,0,0,.88),0 0 22px rgba(214,105,42,.13);">
+		<div id="harvey-upgrade-title" style="color:#f2b36f;font-size:13px;font-weight:bold;border-bottom:1px solid #6e4328;padding-bottom:6px;margin-bottom:8px;letter-spacing:.04em;">🔥 鍛冶職人 ハーヴェイ</div>
+		<div id="harvey-upgrade-body" style="overflow-y:auto;font-size:11px;line-height:1.75;color:#ead7c4;"></div>
+		<div style="display:flex;gap:6px;margin-top:10px;">
+			<button id="harvey-upgrade-confirm-btn" onclick="confirmHarveyEquipmentUpgrade()" style="flex:1;min-height:40px;background:#6d3c20;border-color:#d4864b;color:#ffe0bd;">それでも頼む</button>
+			<button onclick="closeHarveyUpgradeModal()" style="flex:1;min-height:40px;background:#302824;border-color:#66564b;color:#cdbbad;">やめておく</button>
+		</div>
+	</div>
+</div>
+
+<div id="summona-final-heal-flash" aria-hidden="true"></div>
+<div id="monolith-modal" aria-hidden="true" style="position:fixed;inset:0;z-index:471;display:flex;align-items:center;justify-content:center;padding:14px;pointer-events:none;visibility:hidden;opacity:0;transition:opacity .24s ease;background:rgba(55,0,0,.03);">
+	<div id="monolith-modal-card" style="width:min(92vw,410px);display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(66,14,18,.96),rgba(32,8,11,.965) 30%,rgba(12,7,8,.975));border:2px solid rgba(180,50,58,.56);border-radius:8px;padding:11px;box-shadow:0 10px 32px rgba(0,0,0,.86),0 0 22px rgba(150,12,20,.15);transform:translateY(5px) scale(.985);transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease;">
+		<div id="monolith-modal-title" style="color:#f3a9ad;font-size:13px;font-weight:bold;border-bottom:1px solid rgba(150,55,60,.48);padding-bottom:6px;margin-bottom:8px;letter-spacing:.14em;">――</div>
+		<div id="monolith-modal-body" style="font-size:12px;line-height:1.85;color:#e7c4c6;text-shadow:0 0 8px rgba(255,80,90,.14);transition:filter .20s ease,color .20s ease,opacity .20s ease;white-space:pre-wrap;overflow-wrap:anywhere;">……。</div>
+		<div id="monolith-modal-actions" style="display:none;margin-top:10px;pointer-events:auto;">
+			<input id="monolith-answer-input" type="text" maxlength="12" placeholder="12文字以内で答える" oninput="limitMugenInputLength(this)" style="display:none;width:100%;min-height:36px;margin-bottom:7px;padding:6px 8px;background:#16090b;color:#ffd8da;border:1px solid #7f3038;border-radius:4px;font-size:12px;">
+			<button id="monolith-modal-action-btn" type="button" onclick="advanceMonthlyMonolithDialogue()" style="width:100%;min-height:38px;background:#511b22;border-color:#b6404a;color:#ffd8da;">応える</button>
+		</div>
+	</div>
+</div>
+
+<div id="summona-help-modal" role="dialog" aria-modal="true" aria-labelledby="summona-help-title" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:51000;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));">
+	<div style="background:#161b1e;border:2px solid #7fb7d8;border-radius:8px;width:100%;max-width:520px;height:min(82dvh,620px);max-height:calc(100dvh - 24px);display:flex;flex-direction:column;padding:9px;box-shadow:0 8px 28px rgba(0,0,0,.9);">
+		<div style="display:flex;justify-content:space-between;align-items:center;gap:7px;border-bottom:1px solid #456;padding-bottom:7px;margin-bottom:6px;flex-shrink:0;">
+			<span id="summona-help-title" style="font-size:13px;font-weight:bold;color:#bfe8ff;flex:1;text-align:center;">🔔 サモナに聞く</span>
+			<button id="summona-help-close" onclick="closeSummonaHelp()" aria-label="サモナへの相談を閉じる" style="min-width:42px;min-height:40px;padding:4px 8px;font-size:14px;background:#444;border-color:#789;">✕</button>
+		</div>
+		<button id="summona-help-browse" type="button" aria-expanded="false" aria-controls="summona-help-menu" onclick="toggleSummonaHelpBrowse()">☰ 話題を選ぶ</button>
+		<div id="summona-help-body" style="display:flex;gap:7px;flex:1;min-height:0;font-size:12px;line-height:1.65;">
+			<nav id="summona-help-menu" aria-label="相談する話題" style="width:38%;min-width:108px;max-width:160px;flex-shrink:0;overflow-y:auto;padding:2px 3px 8px 0;border-right:1px solid #456;"></nav>
+			<div id="summona-help-detail" role="region" aria-live="polite" style="min-width:0;flex:1;overflow-y:auto;padding:4px 4px 14px 1px;"></div>
+		</div>
+	</div>
+</div>
+
+<div id="character-detail-modal" style="display:none;inset:0;background:rgba(0,0,0,.9);z-index:470;align-items:center;justify-content:center;padding:12px;" onclick="if(event.target===this) closeCharacterDetail()">
+	<div style="width:min(94vw,420px);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;background:#171717;border:2px solid var(--accent);border-radius:7px;padding:9px;box-shadow:0 8px 28px rgba(0,0,0,.85);">
+		<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #555;padding-bottom:5px;margin-bottom:6px;">
+			<b id="character-detail-title" style="font-size:12px;color:var(--accent);"></b>
+			<button onclick="closeCharacterDetail()" style="padding:2px 8px;font-size:11px;">✕</button>
+		</div>
+		<div id="character-detail-body" style="overflow-y:auto;font-size:11px;line-height:1.55;"></div>
+		<button id="character-detail-deck-btn" onclick="openCharacterDeckEditor()" style="display:none;min-height:40px;margin-top:8px;background:#294654;border-color:#638ca3;">デッキ</button>
+	</div>
+</div>
+
+<div id="guild-join-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:465;align-items:center;justify-content:center;padding:12px;">
+	<div style="width:min(94vw,420px);max-height:88vh;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#20242a,#151515 24%);border:2px solid #8aa8bd;border-radius:7px;padding:9px;">
+		<div style="font-size:12px;color:#bfe8ff;font-weight:bold;border-bottom:1px solid #456;padding-bottom:5px;">🏛️ 冒険者ギルド ― はじめての仲間</div>
+		<div id="guild-join-body" style="overflow-y:auto;flex:1;padding:7px 0;font-size:11px;line-height:1.6;"></div>
+		<button onclick="confirmStarterGuildJoin()" style="padding:8px;background:#2a5a2a;font-size:11px;">仲間として迎える</button>
+	</div>
+</div>
+
+<div id="starter-party-name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:466;align-items:center;justify-content:center;padding:12px;">
+	<div style="width:min(92vw,390px);background:#171717;border:2px solid #8aa8bd;border-radius:7px;padding:12px;">
+		<div style="font-size:12px;color:#bfe8ff;font-weight:bold;margin-bottom:8px;">🏷️ パーティ名を決めよう</div>
+		<div style="font-size:11px;line-height:1.6;margin-bottom:8px;">これから仲間たちと名乗るパーティ名を決めよう。あとからギルドで変更できる。</div>
+		<input id="starter-party-name-input" type="text" maxlength="12" style="width:100%;padding:8px;background:#111;color:#fff;border:1px solid #667;margin-bottom:8px;">
+		<button onclick="confirmStarterPartyName()" style="width:100%;padding:8px;background:#2a5a2a;">この名前で登録</button>
+	</div>
+</div>
+
+<div id="summona-chapter-end" role="dialog" aria-label="チャプター終了演出" aria-hidden="true">
+ <div class="end-rule"></div><div id="summona-chapter-end-label"></div><div id="summona-chapter-end-subtitle"></div><div id="summona-chapter-end-final">END</div>
+ <button id="summona-chapter-end-skip" type="button" onclick="finishSummonaChapterEndCard()">スキップ</button>
+</div>
+<div id="dungeon-entry-transition" aria-hidden="true">
+	<div id="entry-word-stage"><div id="entry-word-line"></div></div>
+	<button id="dungeon-entry-skip" type="button" onclick="skipDungeonEntryTransition()">演出をスキップ</button>
+</div>
+<script src="./assets/update-history.js?v=2026.10.30-2"></script>
+<script src="./assets/00-language-data.js?v=2026.10.30-2"></script>
+<script src="./assets/01-word-filter.js?v=2026.10.30-2"></script>
+<script src="./assets/02-game.js?v=2026.10.30-2"></script><script src="./assets/03-enemy-symbols.js?v=2026.10.30-2"></script>
+
+<div id="formation-departure-modal" class="modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="formation-departure-title">
+  <div class="game-dialog-card">
+    <div id="formation-departure-title" class="game-dialog-title">隊列の確認</div>
+    <div id="formation-departure-message" class="game-dialog-message"></div>
+    <div class="game-dialog-actions" style="display:flex;flex-wrap:wrap;gap:5px;">
+      <button id="formation-departure-auto" type="button" onclick="resolveFormationDepartureChoice('auto')" style="flex:1 1 100%;background:#294654;border-color:#7fb7d8;">適切な配置に変更する</button>
+      <button type="button" onclick="resolveFormationDepartureChoice('continue')" style="flex:1;">そのまま出発</button>
+      <button type="button" onclick="resolveFormationDepartureChoice('cancel')" style="flex:1;">戻る</button>
+    </div>
+  </div>
+</div>
+<div id="game-dialog-modal" class="modal" style="display:none;" aria-hidden="true">
+  <div class="game-dialog-card" role="dialog" aria-modal="true" aria-labelledby="game-dialog-title">
+    <div id="game-dialog-title" class="game-dialog-title">確認</div>
+    <div id="game-dialog-message" class="game-dialog-message"></div>
+    <input id="game-dialog-input" class="game-dialog-input" type="text" style="display:none;">
+    <div class="game-dialog-actions">
+      <button id="game-dialog-cancel" type="button" onclick="resolveGameDialog(false)">キャンセル</button>
+      <button id="game-dialog-confirm" type="button" onclick="resolveGameDialog(true)">決定</button>
+    </div>
+  </div>
+</div>
+<div id="load-recovery-modal" class="modal" style="display:none;" aria-hidden="true">
+  <div class="game-dialog-card" role="dialog" aria-modal="true" aria-labelledby="load-recovery-title">
+    <div id="load-recovery-title" class="game-dialog-title">冒険の記録を読み込めません</div>
+    <div id="load-recovery-message" class="game-dialog-message"></div>
+    <div class="load-recovery-code">問い合わせ用エラーコード： <strong id="load-recovery-code">LOAD-UNKNOWN-01</strong> <button type="button" onclick="copyLoadRecoveryErrorCode()" style="min-height:30px;margin-left:6px;padding:3px 7px;">コピー</button></div>
+    <div id="load-recovery-detail" class="load-recovery-detail"></div>
+    <div id="load-recovery-status" class="load-recovery-status"></div>
+    <div class="load-recovery-actions">
+      <button type="button" onclick="retryFailedSaveLoad()">🔄 読み込みを再試行</button>
+      <button type="button" onclick="exportFailedLoadRecoveryBackup()">💾 復旧用バックアップ</button>
+      <button type="button" onclick="startFreshAfterLoadFailure()">🌱 記録を残して最初から</button>
+      <button type="button" class="danger" onclick="deleteFailedSaveAndRestart()">🗑️ セーブを削除</button>
+    </div>
+  </div>
+</div>
+<script src="./assets/04-viewport.js?v=2026.10.30-2"></script>
+
+<script src="./assets/05-living-dungeon.js?v=2026.10.30-2"></script>
+
+<script src="./assets/06-living-followers.js?v=2026.10.30-2"></script>
+
+
+<script src="./assets/07-living-events.js?v=2026.10.30-2"></script>
+
+
+
+<script src="./assets/08-audio.js?v=2026.10.30-2"></script>
+<script src="./assets/pwa.js?v=2026.10.30-2"></script>
+</body>
+</html>
